@@ -11,6 +11,8 @@
 #' 1. AccountNumber -- Unique numeric identifier --
 #' 2. Date -- Daily consecutive --
 #' 3. Count -- Must include all real numbers --
+#' 
+#' @import tidyverse
 #'
 #' @return nested joined tibble
 #' @export
@@ -18,7 +20,7 @@
 #' @examples test
 nest_todo <- function(data) {
   
-  library(tidyverse)
+  devtools::use_package("tidyverse")
   
   day <- nest_core(data, "day")
   week <- nest_core(data, "week")
@@ -54,7 +56,9 @@ nest_todo <- function(data) {
 #' 2. week
 #' 3. month
 #' 4. year
-#'
+#' 
+#' @import tidyverse lubridate 
+#' @importFrom Hmisc capitalize
 #'
 #' @return nested tibble
 #' @export
@@ -65,10 +69,6 @@ nest_core <- function(data, type) {
   devtools::use_package("tidyverse")
   devtools::use_package("lubridate")
   devtools::use_package("Hmisc")
-  
-  library(tidyverse)
-  library(lubridate)
-  library(Hmisc)
 
   tmpColName <- capitalize(type)
   letter <- capitalize(substr(type, 1, 1))

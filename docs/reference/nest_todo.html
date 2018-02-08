@@ -113,44 +113,7 @@ with "AccountNumber" being the identifier:
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>test</span></div><div class='output co'>#&gt; function (pkg = ".", filter = NULL, ...) 
-#&gt; {
-#&gt;     check_suggested("testthat")
-#&gt;     pkg &lt;- as.package(pkg)
-#&gt;     if (!uses_testthat(pkg) &amp;&amp; interactive()) {
-#&gt;         message("No testing infrastructure found. Create it?")
-#&gt;         if (menu(c("Yes", "No")) == 1) {
-#&gt;             use_testthat(pkg)
-#&gt;         }
-#&gt;         return(invisible())
-#&gt;     }
-#&gt;     test_path &lt;- find_test_dir(pkg$path)
-#&gt;     test_files &lt;- dir(test_path, "^test.*\\.[rR]$")
-#&gt;     if (length(test_files) == 0) {
-#&gt;         message("No tests: no files in ", test_path, " match '^test.*\\.[rR]$'")
-#&gt;         return(invisible())
-#&gt;     }
-#&gt;     if (pkg$package != "testthat") {
-#&gt;         pkg$depends &lt;- paste0("testthat, ", pkg$depends)
-#&gt;         if (grepl("^testthat, *$", pkg$depends)) 
-#&gt;             pkg$depends &lt;- "testthat"
-#&gt;     }
-#&gt;     message("Loading ", pkg$package)
-#&gt;     ns_env &lt;- load_all(pkg, quiet = TRUE)$env
-#&gt;     message("Testing ", pkg$package)
-#&gt;     Sys.sleep(0.05)
-#&gt;     utils::flush.console()
-#&gt;     env &lt;- new.env(parent = ns_env)
-#&gt;     testthat_args &lt;- list(test_path, filter = filter, env = env, 
-#&gt;         ... = ...)
-#&gt;     if (packageVersion("testthat") &gt; "1.0.2") {
-#&gt;         testthat_args &lt;- c(testthat_args, load_helpers = FALSE, 
-#&gt;             encoding = pkg$encoding %||% "unknown")
-#&gt;     }
-#&gt;     withr::with_envvar(r_env_vars(), do.call(testthat::test_dir, 
-#&gt;         testthat_args))
-#&gt; }
-#&gt; &lt;environment: namespace:devtools&gt;</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>test</span></div><div class='output co'>#&gt; <span class='error'>Error in eval(expr, envir, enclos): object 'test' not found</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -167,7 +130,7 @@ with "AccountNumber" being the identifier:
 
       <footer>
       <div class="copyright">
-  <p>Developed by Joseph Clark L..</p>
+  <p>Developed by Joseph Clark.</p>
 </div>
 
 <div class="pkgdown">

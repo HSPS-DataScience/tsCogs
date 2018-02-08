@@ -11,6 +11,8 @@
 #' 3. "weeks"
 #' 4. "days"
 #' @param interval Must be positive integer excluding zero
+#' 
+#' @import tidyverse
 #'
 #' @return nested tibble
 #' @export
@@ -40,6 +42,10 @@ nest_append_interval <- function(nestTib, rawData, type, interval) {
 #' 3. "weeks"
 #' 4. "days"
 #' @param interval Must be positive integer excluding zero
+#' 
+#' @import tidyverse lubridate
+#' @importFrom purrr map2
+#' @importFrom Hmisc capitalize
 #'
 #' @return nested joined tibble
 #' @export
@@ -47,10 +53,10 @@ nest_append_interval <- function(nestTib, rawData, type, interval) {
 #' @examples test
 nest_interval <- function(data, type, interval) {
   
-  library(tidyverse)
-  library(lubridate)
-  library(Hmisc)
-  library(purrr)
+  devtools::use_package("tidyverse")
+  devtools::use_package("lubridate")
+  devtools::use_package("purr")
+  devtools::use_package("Hmisc")
 
   derefType <- "type"
 
@@ -112,6 +118,8 @@ nest_interval <- function(data, type, interval) {
 #' 1. "A"
 #' 2. "R"
 #' 3. "L"
+#' 
+#' @import tidyverse Hmisc
 #'
 #' @return nested tibble
 #' @export
@@ -119,8 +127,8 @@ nest_interval <- function(data, type, interval) {
 #' @examples test
 nest_core_interval <- function(data, type, interval, divide) {
   
-  library(tidyverse)
-  library(Hmisc)
+  devtools::use_package("tidyverse")
+  devtools::use_package("Hmisc")
 
   letter <- capitalize(substr(type, 1, 1))
 

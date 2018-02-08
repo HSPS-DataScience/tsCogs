@@ -8,16 +8,17 @@
 #' @param startQuant Quantile percentage to determine start date cutPoint -- Defaults to 0.2 
 #' @param movAvg_zeroDays Number of consecetive moving averages evaluated at zero to begin end date cutPoint process -- Defaults to 1
 #' @param dialBack Number of days to 'dialBack' to determine a new end date cutPoint -- Defaults to 0
+#'
+#' @import tidyverse lubridate
+#' 
 #' @return filtered tibble
 #' @export
 #'
 #' @examples test
 cut_Points <- function(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1, dialBack = 0) {
   
-  library(tidyverse)
-  library(magrittr)
-  library(pracma)
-  library(lubridate)
+  devtools::use_package("tidyverse")
+  devtools::use_package("lubridate")
   
   data %>%
     filter(Cluster3 == "Dropped") %>%

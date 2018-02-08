@@ -2,18 +2,19 @@ Package: tsCogs
 Type: Package
 Title: Time series / cognostics generation package for Henry Schein Data Science Team
 Version: 0.1.0
-Authors@R: person("Joseph","L.","Clark", role = c("aut","cre"))
-Maintainer: The package maintainer <yourself@somewhere.net>
+Authors@R: person("Joseph","Clark", role = c("aut","cre"), email = "joeyclarktkd@gmail.com")
+Maintainer: Joseph Clark <joeyclarktkd@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
+Depends: tidyverse,
+    lubridate,
+    Hmisc,
+    purrr
 Imports: tidyverse,
-    magrittr,
-    pracma,
-    strucchange,
     lubridate,
     Hmisc,
     purrr

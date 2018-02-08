@@ -1,15 +1,4 @@
-library(tidyverse)
-library(trelliscope)
-library(trelliscopejs)
-library(magrittr)
-library(lubridate)
-library(rbokeh)
-library(Hmisc)
-library(profvis)
-library(purrr)
-library(pracma)
-library(strucchange)
-library(trelliscopejs)
+library(tsCogs)
 
 
 ###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
@@ -85,6 +74,11 @@ bob
 Sys.time() - time1
 
 bob <- nest_core(smallData, "month")
+
+iris %>%
+  select(data = iris, Species)
+
+select(data = iris, Species)
 
 
 #########################################################
