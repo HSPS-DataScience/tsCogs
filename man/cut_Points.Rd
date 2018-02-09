@@ -4,13 +4,22 @@
 \alias{cut_Points}
 \title{cut_Points}
 \usage{
-cut_Points(data)
+cut_Points(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1,
+  dialBack = 0)
 }
 \arguments{
 \item{data}{Must include, at minimun, following columns:
 1. AccountNumber -- Unique numeric identifier --
 2. Date -- Daily consecutive --
 3. Count -- Must include all real numbers --}
+
+\item{movAvg}{Moving Average -- Defaults to 21}
+
+\item{startQuant}{Quantile percentage to determine start date cutPoint -- Defaults to 0.2}
+
+\item{movAvg_zeroDays}{Number of consecetive moving averages evaluated at zero to begin end date cutPoint process -- Defaults to 1}
+
+\item{dialBack}{Number of days to 'dialBack' to determine a new end date cutPoint -- Defaults to 0}
 }
 \value{
 filtered tibble
