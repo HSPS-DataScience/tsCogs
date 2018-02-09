@@ -1,10 +1,44 @@
+---
+title: "Clustering"
+author: "Joseph & Trenton"
+date: "February 9, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Cluster Analysis
+
+#### Potential Methods
+
+1. cluster::kmeans()    
+    - base R function     
+
+2. cluster::clara()  
+    - base R function built for bigger data    
+
+3. biganalytics::bigkmeans()    
+    - revolutionAnalytics/Microsoft R function
+
+4. sparklyr::ml_kmeans()    
+    - distributed/big data version using Apache Spark
+
+5. dtwclust::tsclust()    
+    - kmeans based on time-series autocorrelation dissimilarity
+
+
+#### Results using sparklyr
+
+```{r results, error = F, message = F, warning = F}
+# source("C:/Users/trenton.pulsipher/Documents/R/r_prjs/tsCogs/Testing/Joseph/trelliscope.R")
 library(tsCogs)
 library(trelliscopejs)
 library(magrittr)
 library(sparklyr)
 
-
-rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
+rawData <- readRDS("C:/Users/trenton.pulsipher/Documents/R/r_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
 
 rawData %<>%
   as.tibble() %>%
@@ -13,48 +47,41 @@ rawData %<>%
   filter(!is.na(AccountNumber)) %>%
   arrange(Date) %>%
   mutate(Week = floor_date(Date, "week")) %>%
-  
   group_by(AccountNumber, Week) %>%
   summarise(Count = sum(Count)) %>%
   rename(Date = Week) %>%
-  
   mutate(meanCount = mean(Count, na.rm = T), 
          normCount = Count / meanCount) %>%
   select(AccountNumber, Date, normCount) %>%
   spread(key = Date, value = normCount)
-
 
 sc <- spark_connect(master = "local") # setup spark connection
 rawData_tbl <- copy_to(sc, rawData %>% 
                          ungroup() ,#%>%
                          #select(-AccountNumber), 
                        "rawData", overwrite = TRUE)
-
-tic()
-set.seed(1234)
-numClusters = c(10,25,50,100,150,200,300,500,1000)
-out = list()
-for(i in 1:length(numClusters)) {
-  out[[i]] = rawData_tbl %>%
-    ml_kmeans(~.-AccountNumber, centers = numClusters[[i]])
-  cat(numClusters[i], " ")
-}
-toc()
-
-
-qplot(x = numClusters, y = unlist(lapply(out, function(x) x$cost))) + 
-  geom_line() + 
-  labs(x = "Number of Clusters", y = "Total W/in Sums of Squares") +
-  theme_bw()
-
+# tic()
+# set.seed(1234)
+# numClusters = c(10,25,50,100,150,200,300,500,1000)
+# out = list()
+# for(i in 1:length(numClusters)) {
+#   out[[i]] = rawData_tbl %>%
+#     ml_kmeans(~.-AccountNumber, centers = numClusters[[i]])
+#   cat(numClusters[i], " ")
+# }
+# toc()
+# 
+# 
+# qplot(x = numClusters, y = unlist(lapply(out, function(x) x$cost))) + 
+#   geom_line() + 
+#   labs(x = "Number of Clusters", y = "Total W/in Sums of Squares") +
+#   theme_bw()
 
 mlKmeans <- rawData_tbl %>%
   ml_kmeans(~.-AccountNumber, centers = 200)
 
-
 bob <- ml_predict(mlKmeans, rawData_tbl) %>%
   as_tibble()
-
 
 bob %>%
   select(-features) %>%
@@ -78,13 +105,6 @@ bob %>%
                        labs(x = "", y = "normalized count")
                      )
   ) %>%
-  trelliscope("Cluster Results", self_contained = T) #, auto_cog = FALSE)
-  
-
-
-
-
-
-
-
+  trelliscope("Cluster Results", self_contained = T) 
+```
 
