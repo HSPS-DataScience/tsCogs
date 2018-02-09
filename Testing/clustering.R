@@ -231,7 +231,7 @@ tic()
 numClusters = c(2:10,15,25,50)
 out3 = list()
 for(i in 1:length(numClusters)) {
-  out3[[i]] <- tsclust(rawDailyProfilesAllNorm[,-1], type = "partitional", k = k, seed = 1234)
+  out3[[i]] <- tsclust(rawDailyProfilesAllNorm[,-1], type = "partitional", k = numClusters[i], seed = 1234)
   cat(numClusters[i], " ")
 }
 toc() #
