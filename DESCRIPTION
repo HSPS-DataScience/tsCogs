@@ -1,6 +1,6 @@
 Package: tsCogs
 Type: Package
-Title: Time series / cognostics generation package for Henry Schein Data Science Team
+Title: Time series cognostics generation package for Henry Schein Data Science Team
 Version: 0.1.0
 Author: Joseph Clark and Trenton Pulsipher
 Maintainer: The package maintainer <yourself@somewhere.net>
