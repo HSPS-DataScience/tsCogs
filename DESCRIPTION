@@ -1,6 +1,6 @@
 Package: tsCogs
 Type: Package
-Title: Time series cognostics generation package for Henry Schein Data Science Team
+Title: Time series / cognostics generation package for Henry Schein Data Science Team
 Version: 0.1.0
 Authors@R: person("Joseph","Clark", role = c("aut","cre"), email = "joeyclarktkd@gmail.com")
 Maintainer: Joseph Clark <joeyclarktkd@gmail.com>
@@ -13,7 +13,9 @@ RoxygenNote: 6.0.1
 Depends: tidyverse,
     lubridate,
     Hmisc,
-    purrr
+    purrr,
+    tictoc,
+    sparklyr
 Imports: tidyverse,
     lubridate,
     Hmisc,

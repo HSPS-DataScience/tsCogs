@@ -19,7 +19,7 @@ d <- sqlFetch(cn, sqlFilename) # 4 mins, ~610 Mb sized object, ~39.8M rows
 Sys.time() - time1
 
 # saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
-# load("~/R/R_prjs/hspsDS/R_Data/rawDailyProfilesAll-20180206.rds")
+# load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
 
 rawDailyProfilesAllNorm <- d %>%
   as.tibble() %>%
