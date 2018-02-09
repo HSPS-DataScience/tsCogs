@@ -75,11 +75,12 @@ Sys.time() - time1
 
 bob <- nest_core(smallData, "month")
 
-iris %>%
-  select(data = iris, Species)
 
-select(data = iris, Species)
+sc <- spark_connect(master = "local")
+iris_tbl <- copy_to(sc, iris, "iris", overwrite = TRUE)
 
+kmeans_model <- iris_tbl %>%
+  ml_kmeans(~., centers = 100)
 
 #########################################################
 
