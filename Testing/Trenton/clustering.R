@@ -10,16 +10,16 @@ library(dtwclust)
 library(tictoc)
 
 
-time1 <- Sys.time()
-###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
-sqlFilename <- 'dbo.eClaimsDailyProfilesExpanded'
-cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
-                       believeNRows = F)
-d <- sqlFetch(cn, sqlFilename) # 4 mins, ~610 Mb sized object, ~39.8M rows
-Sys.time() - time1
+# tic()
+# ###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
+# sqlFilename <- 'dbo.eClaimsDailyProfilesExpanded'
+# cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
+#                        believeNRows = F)
+# d <- sqlFetch(cn, sqlFilename) # 4 mins, ~610 Mb sized object, ~39.8M rows
+# toc()
 
 # saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
-# load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
+load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
 
 rawDailyProfilesAllNorm <- d %>%
   as.tibble() %>%
@@ -27,12 +27,12 @@ rawDailyProfilesAllNorm <- d %>%
   group_by(AccountNumber) %>%
   filter(!is.na(AccountNumber)) %>%
   arrange(Date) %>%
+  # Create week number and summarise by week
   mutate(Week = floor_date(Date, "week")) %>%
-  
   group_by(AccountNumber, Week) %>%
   summarise(Count = sum(Count)) %>% #n()) %>%
   rename(Date = Week) %>%
-  
+  # normalize the profiles
   mutate(meanCount = mean(Count, na.rm = T), 
          normCount = Count / meanCount) %>%
   select(AccountNumber, Date, normCount) %>%
@@ -217,7 +217,7 @@ toc()
 tic()
 sc <- spark_connect(master = "local")
 data_tbl <- copy_to(sc, rawDailyProfilesAllNorm[,-1], "data", overwrite = TRUE)
-numClusters = c(10,25,50,75,100,150,200,500)
+numClusters = c(10,25,50,100,150,200,300,500,1000)
 out4 = list()
 for(i in 1:length(numClusters)) {
   out4[[i]] <- ml_kmeans(data_tbl, ~., centers = numClusters[i])
