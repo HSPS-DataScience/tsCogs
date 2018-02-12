@@ -1,11 +1,11 @@
 ----------------------------------------------------------------
-Fri Feb 09 09:46:38 MST 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0161-7b76-2feb-0000007725b8 
-on database directory memory:C:\Users\trenton.pulsipher\Documents\R\r_prjs\tsCogs\databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@779aaa 
-Loaded from file:/C:/Users/trenton.pulsipher/AppData/Local/spark/spark-2.2.0-bin-hadoop2.7/jars/derby-10.12.1.1.jar
+Mon Feb 12 08:34:12 MST 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0161-8aa6-f206-00000071a130 
+on database directory memory:C:\Users\Joseph.Clark2\Documents\R\R_prjs\tsCogs\databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@c34bed 
+Loaded from file:/C:/Users/Joseph.Clark2/AppData/Local/spark/spark-2.2.0-bin-hadoop2.7/jars/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
 java.runtime.version=1.8.0_161-b12
-user.dir=C:\Users\trenton.pulsipher\Documents\R\r_prjs\tsCogs
+user.dir=C:\Users\Joseph.Clark2\Documents\R\R_prjs\tsCogs
 os.name=Windows 10
 os.arch=x86
 os.version=10.0
