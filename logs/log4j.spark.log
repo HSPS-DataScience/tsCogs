@@ -37403,3 +37403,74 @@ FROM `sparklyr_tmp_34cc170e1045`
 18/02/12 10:34:11 INFO BlockManagerInfo: Removed broadcast_517_piece0 on 127.0.0.1:51325 in memory (size: 48.8 KB, free: 369.4 MB)
 18/02/12 10:34:11 INFO BlockManagerInfo: Removed broadcast_516_piece0 on 127.0.0.1:51325 in memory (size: 61.2 KB, free: 369.5 MB)
 18/02/12 10:34:11 INFO ContextCleaner: Cleaned accumulator 9269
+18/02/12 11:00:35 INFO SparkContext: Invoking stop() from shutdown hook
+18/02/12 11:00:35 INFO SparkUI: Stopped Spark web UI at http://127.0.0.1:4040
+18/02/12 11:00:35 INFO MapOutputTrackerMasterEndpoint: MapOutputTrackerMasterEndpoint stopped!
+18/02/12 11:00:35 INFO MemoryStore: MemoryStore cleared
+18/02/12 11:00:35 INFO BlockManager: BlockManager stopped
+18/02/12 11:00:35 INFO BlockManagerMaster: BlockManagerMaster stopped
+18/02/12 11:00:35 INFO OutputCommitCoordinator$OutputCommitCoordinatorEndpoint: OutputCommitCoordinator stopped!
+18/02/12 11:00:35 WARN SparkEnv: Exception while deleting Spark temp dir: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec\userFiles-ee1c51b8-26ea-4d6b-ba20-cd633186d7b1
+java.io.IOException: Failed to delete: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec\userFiles-ee1c51b8-26ea-4d6b-ba20-cd633186d7b1
+	at org.apache.spark.util.Utils$.deleteRecursively(Utils.scala:1031)
+	at org.apache.spark.SparkEnv.stop(SparkEnv.scala:103)
+	at org.apache.spark.SparkContext$$anonfun$stop$11.apply$mcV$sp(SparkContext.scala:1937)
+	at org.apache.spark.util.Utils$.tryLogNonFatalError(Utils.scala:1317)
+	at org.apache.spark.SparkContext.stop(SparkContext.scala:1936)
+	at org.apache.spark.SparkContext$$anonfun$2.apply$mcV$sp(SparkContext.scala:581)
+	at org.apache.spark.util.SparkShutdownHook.run(ShutdownHookManager.scala:216)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1954)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at scala.util.Try$.apply(Try.scala:192)
+	at org.apache.spark.util.SparkShutdownHookManager.runAll(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anon$2.run(ShutdownHookManager.scala:178)
+	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
+18/02/12 11:00:35 INFO SparkContext: Successfully stopped SparkContext
+18/02/12 11:00:35 INFO ShutdownHookManager: Shutdown hook called
+18/02/12 11:00:35 INFO ShutdownHookManager: Deleting directory C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec\userFiles-ee1c51b8-26ea-4d6b-ba20-cd633186d7b1
+18/02/12 11:00:35 ERROR ShutdownHookManager: Exception while deleting Spark temp dir: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec\userFiles-ee1c51b8-26ea-4d6b-ba20-cd633186d7b1
+java.io.IOException: Failed to delete: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec\userFiles-ee1c51b8-26ea-4d6b-ba20-cd633186d7b1
+	at org.apache.spark.util.Utils$.deleteRecursively(Utils.scala:1031)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1$$anonfun$apply$mcV$sp$3.apply(ShutdownHookManager.scala:65)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1$$anonfun$apply$mcV$sp$3.apply(ShutdownHookManager.scala:62)
+	at scala.collection.IndexedSeqOptimized$class.foreach(IndexedSeqOptimized.scala:33)
+	at scala.collection.mutable.ArrayOps$ofRef.foreach(ArrayOps.scala:186)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1.apply$mcV$sp(ShutdownHookManager.scala:62)
+	at org.apache.spark.util.SparkShutdownHook.run(ShutdownHookManager.scala:216)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1954)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at scala.util.Try$.apply(Try.scala:192)
+	at org.apache.spark.util.SparkShutdownHookManager.runAll(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anon$2.run(ShutdownHookManager.scala:178)
+	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
+18/02/12 11:00:35 INFO ShutdownHookManager: Deleting directory C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec
+18/02/12 11:00:35 ERROR ShutdownHookManager: Exception while deleting Spark temp dir: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec
+java.io.IOException: Failed to delete: C:\Users\Joseph.Clark2\AppData\Local\Temp\spark-3b68248f-a285-4f50-a1e0-1b16291db0ec
+	at org.apache.spark.util.Utils$.deleteRecursively(Utils.scala:1031)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1$$anonfun$apply$mcV$sp$3.apply(ShutdownHookManager.scala:65)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1$$anonfun$apply$mcV$sp$3.apply(ShutdownHookManager.scala:62)
+	at scala.collection.IndexedSeqOptimized$class.foreach(IndexedSeqOptimized.scala:33)
+	at scala.collection.mutable.ArrayOps$ofRef.foreach(ArrayOps.scala:186)
+	at org.apache.spark.util.ShutdownHookManager$$anonfun$1.apply$mcV$sp(ShutdownHookManager.scala:62)
+	at org.apache.spark.util.SparkShutdownHook.run(ShutdownHookManager.scala:216)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1$$anonfun$apply$mcV$sp$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.Utils$.logUncaughtExceptions(Utils.scala:1954)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply$mcV$sp(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anonfun$runAll$1.apply(ShutdownHookManager.scala:188)
+	at scala.util.Try$.apply(Try.scala:192)
+	at org.apache.spark.util.SparkShutdownHookManager.runAll(ShutdownHookManager.scala:188)
+	at org.apache.spark.util.SparkShutdownHookManager$$anon$2.run(ShutdownHookManager.scala:178)
+	at org.apache.hadoop.util.ShutdownHookManager$1.run(ShutdownHookManager.java:54)
