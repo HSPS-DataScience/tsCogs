@@ -21,26 +21,30 @@ knitr::opts_chunk$set(echo = TRUE)
 
 3. biganalytics::bigkmeans()    
     - revolutionAnalytics/Microsoft R function
+    - found little to no speed up
 
 4. sparklyr::ml_kmeans()    
     - distributed/big data version using Apache Spark
+    - much faster for big data    
+    - used this version    
 
 5. dtwclust::tsclust()    
     - kmeans based on time-series autocorrelation dissimilarity
+    - can't handle our larger datasize    
 
 
 #### Results using sparklyr
 
 ```{r results, error = F, message = F, warning = F}
-# source("C:/Users/trenton.pulsipher/Documents/R/r_prjs/tsCogs/Testing/Joseph/trelliscope.R")
 library(tsCogs)
 library(trelliscopejs)
 library(magrittr)
 library(sparklyr)
 
-rawData <- readRDS("C:/Users/trenton.pulsipher/Documents/R/r_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
+# More generic location
+rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
 
-rawData %<>%
+normalized_Data <- rawData %>%
   as.tibble() %>%
   rename(Date = ymd) %>%
   group_by(AccountNumber) %>%
@@ -57,8 +61,7 @@ rawData %<>%
 
 sc <- spark_connect(master = "local") # setup spark connection
 rawData_tbl <- copy_to(sc, rawData %>% 
-                         ungroup() ,#%>%
-                         #select(-AccountNumber), 
+                       ungroup(),
                        "rawData", overwrite = TRUE)
 # tic()
 # set.seed(1234)
@@ -66,7 +69,7 @@ rawData_tbl <- copy_to(sc, rawData %>%
 # out = list()
 # for(i in 1:length(numClusters)) {
 #   out[[i]] = rawData_tbl %>%
-#     ml_kmeans(~.-AccountNumber, centers = numClusters[[i]])
+#     ml_kmeans(~.-AccountNumber, centers = numClusters[[i]], seed = 1234)
 #   cat(numClusters[i], " ")
 # }
 # toc()
@@ -78,12 +81,12 @@ rawData_tbl <- copy_to(sc, rawData %>%
 #   theme_bw()
 
 mlKmeans <- rawData_tbl %>%
-  ml_kmeans(~.-AccountNumber, centers = 200)
+  ml_kmeans(~.-AccountNumber, centers = 200, seed = 1234)
 
-bob <- ml_predict(mlKmeans, rawData_tbl) %>%
+predict <- ml_predict(mlKmeans, rawData_tbl) %>%
   as_tibble()
 
-bob %>%
+predict %>%
   select(-features) %>%
   # filter(prediction == 70) %>%
   gather("Date", "Count", `20140928`:`20180204`) %>%
@@ -93,18 +96,21 @@ bob %>%
   nest() %>%
   mutate(
     cogs = map_cog(data, ~ data_frame(
-      numAccts = length(unique(.$AccountNumber)),
-      total = sum(.$Count),
-      mean = mean(.$Count),
-      sd = sd(.$Count),
-      cv = (sd(.$Count) / mean(.$Count))
-    )),
+      numAccts = length(unique(.$AccountNumber))#,
+      # total = sum(.$Count),
+      # mean = mean(.$Count),
+      # sd = sd(.$Count),
+      # cv = (sd(.$Count) / mean(.$Count))#,
+      #tcltotal = sum(.$Count) / length(unique(.$AccountNumber))
+      )),
     panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count, group = AccountNumber)) +
-                       geom_line(alpha = .1) +
+                       geom_line(alpha = .05) +
                        theme_bw() +
                        labs(x = "", y = "normalized count")
                      )
   ) %>%
   trelliscope("Cluster Results", self_contained = T) 
 ```
+
+
 
