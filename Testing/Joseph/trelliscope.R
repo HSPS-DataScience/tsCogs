@@ -13,8 +13,26 @@ cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.
 d <- sqlFetch(cn, sqlFilename) # 4 mins, ~610 Mb sized object, ~39.8M rows
 toc()
 
-# More generic location
-rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
+saveRDS(d, file = "../../R_Data/rawDailyProfiles-2018-02-13.rds")
+rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfiles-2018-02-13.rds")
+
+
+rawDailyProfilesAllNorm <- d %>%
+  as.tibble() %>%
+  rename(Date = ymd) %>%
+  group_by(AccountNumber) %>%
+  filter(!is.na(AccountNumber)) %>%
+  arrange(Date) %>%
+  # Create week number and summarise by week
+  mutate(Week = floor_date(Date, "week")) %>%
+  group_by(AccountNumber, Week) %>%
+  summarise(Count = sum(Count)) %>% #n()) %>%
+  rename(Date = Week) %>%
+  # normalize the profiles
+  mutate(meanCount = mean(Count, na.rm = T), 
+         normCount = Count / meanCount) %>%
+  select(AccountNumber, Date, normCount) %>%
+  spread(key = Date, value = normCount)
 
 # tic()
 # set.seed(1234)
