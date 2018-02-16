@@ -2,6 +2,16 @@ library(tsCogs)
 library(trelliscopejs)
 library(magrittr)
 library(sparklyr)
+library(RODBC)
+
+
+tic()
+###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
+sqlFilename <- 'dbo.eClaimDailyProfilesExpanded'
+cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
+                        believeNRows = F)
+d <- sqlFetch(cn, sqlFilename) # 4 mins, ~610 Mb sized object, ~39.8M rows
+toc()
 
 # More generic location
 rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll-20180206.rds")
