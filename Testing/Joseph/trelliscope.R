@@ -17,11 +17,12 @@ saveRDS(d, file = "../../R_Data/rawDailyProfiles-2018-02-13.rds")
 rawData <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfiles-2018-02-13.rds")
 
 
-rawDailyProfilesAllNorm <- d %>%
+rawDailyProfilesAllNorm <- rawData %>%
   as.tibble() %>%
   rename(Date = ymd) %>%
   group_by(AccountNumber) %>%
-  filter(!is.na(AccountNumber)) %>%
+  filter(!is.na(AccountNumber),
+         Date <= ymd("2014-11-01")) %>%
   arrange(Date) %>%
   # Create week number and summarise by week
   mutate(Week = floor_date(Date, "week")) %>%
@@ -56,6 +57,10 @@ rawDailyProfilesAllNorm <- d %>%
 # normalized_Data
 ######################################
 
+
+rawDailyProfilesAllNorm %<>%
+  replace(is.na(.), 0)
+
 normalizedData <- rawData %>%
   as.tibble() %>%
   mutate(AccountNumber = as.character(AccountNumber)) %>%
@@ -73,7 +78,7 @@ normalizedData <- rawData %>%
   spread(key = Date, value = normCount)
 
 sc <- spark_connect(master = "local") # setup spark connection
-normalData_tbl <- copy_to(sc, normalizedData %>% 
+normalData_tbl <- copy_to(sc, rawDailyProfilesAllNorm %>% 
                       ungroup(),
                     "rawData", overwrite = TRUE)
 
@@ -85,7 +90,7 @@ predict <- ml_predict(mlKmeans, normalData_tbl) %>%
 
 predict %>%
   select(-features) %>%
-  gather("Date", "Count", `2014-09-28`:`2018-02-04`) %>%
+  gather("Date", "Count", -AccountNumber, -prediction) %>%
   mutate(Date = ymd(Date)) %>%
   group_by(prediction) %>%
   nest() %>%

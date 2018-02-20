@@ -8,7 +8,7 @@ cut_Points(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1,
   dialBack = 0)
 }
 \arguments{
-\item{data}{Must include, at minimun, following columns:
+\item{data}{Must include, at minimum, following columns:
 1. AccountNumber -- Unique numeric identifier --
 2. Date -- Daily consecutive --
 3. Count -- Must include all real numbers --}

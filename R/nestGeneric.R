@@ -7,7 +7,7 @@
 #' 3. Monthly
 #' 4. Yearly
 #'
-#' @param data Must include, at minimun, following columns:
+#' @param data Must include, at minimum, following columns:
 #' 1. AccountNumber -- Unique numeric identifier --
 #' 2. Date -- Daily consecutive --
 #' 3. Count -- Must include all real numbers --
