@@ -1,7 +1,7 @@
 ---
 title: "Model Training Documentation"
 author: "Joseph & Trenton"
-date: "February 14, 2018"
+date: "February 21, 2018"
 output: html_document
 ---
 
@@ -192,6 +192,26 @@ ORDER BY dailyZeroAccount.AccountNumber, dailyZeroAccount.ymd;
 ### Cluster and Cut-Point Algorithm
 
 #### k-means Clustering
+
+K-means clustering is an unsupervised machine learning method that requires no response variable (truth) for model fitting. This allowed us to generate the truth as a function of the clustering output. A good visual animated example of kmeans clustering is given [here](http://shabal.in/visuals/kmeans/1.html). We examined several different functions/algorithms implementing kmeans clustering, including:
+
+1. cluster::kmeans()    
+    - base R function    
+
+2. cluster::clara()    
+    - base R function built for bigger data    
+
+3. biganalytics::bigkmeans()    
+    - revolutionAnalytics/Microsoft R function for bigger data     
+
+4. sparklyr::ml_kmeans()    
+    - distributed/big data version using Apache Spark     
+
+5. dtwclust::tsclust()  
+    - time series clustering    
+    - preferable but not scaled for our needs
+
+The sparklyr version ran in six minutes (compared to two hours for the base R version). 
 
 
 #### Cut-Point Algorithm

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Joseph &amp; Trenton" />
 
-<meta name="date" content="2018-02-14" />
+<meta name="date" content="2018-02-21" />
 
 <title>Model Training Documentation</title>
 
@@ -121,7 +121,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Model Training Documentation</h1>
 <h4 class="author"><em>Joseph &amp; Trenton</em></h4>
-<h4 class="date"><em>February 14, 2018</em></h4>
+<h4 class="date"><em>February 21, 2018</em></h4>
 
 </div>
 
@@ -298,6 +298,32 @@ ORDER BY dailyZeroAccount.AccountNumber, dailyZeroAccount.ymd;
 <h3>Cluster and Cut-Point Algorithm</h3>
 <div id="k-means-clustering" class="section level4">
 <h4>k-means Clustering</h4>
+<p>K-means clustering is an unsupervised machine learning method that requires no response variable (truth) for model fitting. This allowed us to generate the truth as a function of the clustering output. A good visual animated example of kmeans clustering is given <a href="http://shabal.in/visuals/kmeans/1.html">here</a>. We examined several different functions/algorithms implementing kmeans clustering, including:</p>
+<ol style="list-style-type: decimal">
+<li>cluster::kmeans()
+<ul>
+<li>base R function</li>
+</ul></li>
+<li>cluster::clara()
+<ul>
+<li>base R function built for bigger data</li>
+</ul></li>
+<li>biganalytics::bigkmeans()
+<ul>
+<li>revolutionAnalytics/Microsoft R function for bigger data</li>
+</ul></li>
+<li>sparklyr::ml_kmeans()
+<ul>
+<li>distributed/big data version using Apache Spark</li>
+</ul></li>
+<li>dtwclust::tsclust()
+<ul>
+<li>time series clustering<br />
+</li>
+<li>preferable but not scaled for our needs</li>
+</ul></li>
+</ol>
+<p>The sparklyr version ran in six minutes (compared to two hours for the base R version).</p>
 </div>
 <div id="cut-point-algorithm" class="section level4">
 <h4>Cut-Point Algorithm</h4>
