@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>find_LadderSequence — find_LadderSequence • tsCogs</title>
+<title>gen_trelliscope — gen_trelliscope • tsCogs</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -27,9 +27,9 @@
 <script src="../pkgdown.js"></script>
   
   
-<meta property="og:title" content="find_LadderSequence — find_LadderSequence" />
+<meta property="og:title" content="gen_trelliscope — gen_trelliscope" />
 
-<meta property="og:description" content="find_LadderSequence" />
+<meta property="og:description" content="gen_trelliscope" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -87,37 +87,32 @@
       <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>find_LadderSequence</h1>
+    <h1>gen_trelliscope</h1>
     </div>
 
     
-    <p>find_LadderSequence</p>
+    <p>gen_trelliscope</p>
     
 
-    <pre class="usage"><span class='fu'>find_LadderSequence</span>(<span class='no'>data</span>, <span class='no'>sequence</span>)</pre>
+    <pre class="usage"><span class='fu'>gen_trelliscope</span>(<span class='no'>data</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must be vector of numbers</p></td>
-    </tr>
-    <tr>
-      <th>sequence</th>
-      <td><p>Must be one of following strings:
-1. "I" -- Increasing
-2. "D" -- Decreasing
-3. "IP" -- Increasing Positive
-4. "DP" -- Decreasing Positive
-5. "IN" -- Increasing Negative
-6. "DN" -- Decreasing Negative</p></td>
+      <td><p>Must include, at minimum, following columns:
+1. AccountNumber -- Unique numeric identifier --
+2. Many date columns, with weekly counts within cells -- Weekly consecutive --
+3. features
+4. prediction
+Intended to take data in weekly long format for trelliscope use</p></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>integer</p>
+    <p>trelliscope</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
