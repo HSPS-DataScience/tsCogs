@@ -11,9 +11,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ### Project Description
 
-The generic framework generated to train a machine learning model producing predictions for subsequent reporting is presented here. The operational prediction code begins, ends, and will run in SQL on HSPSDATA, an SQL Server. However, much of the internals were build in R and nearly all of the model training environment is developed in R. 
+The generic framework generated to train a machine learning model producing predictions for subsequent reporting is presented here. The operational prediction code begins, ends, and will run in SQL on HSPSDATA, an SQL Server. However, most of the internals were build in R and nearly all of the model training environment is developed in R. 
 
-The code and method were initially generated, and will be shared here, using eClaim submissions as the example dataset and problem set. Truth was generated using k-means clustering results of the normalized (shape) weekly eClaim profiles. The daily eClaim profiles were trimmed using our own cut-point algorithm and then fed to feature/cognostic set generator, again developed by our team. Those features become the predictors in the machine learning algorithm. The predictions from the model will help identify which customer accounts are at risk of stopping their use of the product (in this case eClaims). Generating a standardized framework and generic individual components allows for a nearly plug-and-play analysis experience and unparalleled efficiencies.
+The code and method were initially generated, and will be shared here, using eClaim submissions as the example dataset and problem set. Truth was generated using k-means clustering results of the normalized (shape) weekly eClaim profiles. The daily eClaim profiles were trimmed using our own cut-point algorithm and then fed to a feature/cognostic set generator, again developed by our team. Those features become the predictors in the machine learning algorithm. The predictions from the model will help identify which customer accounts are at risk of stopping their use of the product (in this case eClaims). Generating a standardized framework and generic individual components allows for a nearly plug-and-play analysis experience and unparalleled efficiencies.
 
 ![Fig. 1 - Model Training Environment/Steps](VOC-modelTrainingDiagram-20180126.PNG)
 
@@ -22,7 +22,7 @@ The code and method were initially generated, and will be shared here, using eCl
 
 ### Raw Transactional Data
 
-Swanilda runs a script against production to generate a table called *dbo.Claim* on both the DTXHIPAA and EZDHIPAA databases on HSPSDATA. The following view, temporary called *dbo.vwTrentonV2*, in the SupportReports database on HSPSDATA joins a few fields from the *dbo.Claim* table to ultimately tie each ClaimID to an AccountNumber (from Siebel). 
+Jeremie created and runs a script against the production archive to generate a table called *dbo.Claim* on both the DTXHIPAA and EZDHIPAA databases on HSPSDATA. The following view, temporary called *dbo.vwTrentonV2*, in the SupportReports database on HSPSDATA joins a few fields from the *dbo.Claim* table to ultimately tie each ClaimID to an AccountNumber (from Siebel). 
 
 Chad Crawford helped identify an improvement in query speed by moving the DISTINCT selection (necessary because *Siebel.dbo.Assets* duplicates data) inside and apply it to only the data joined from *dbo.Practice*, *dbo.Assets*, *dbo.Accounts*, thus avoiding applying it to the larger *dbo.Claim* or joined *dbo.File_Record* tables.
 
@@ -104,14 +104,14 @@ GO
 
 ### Generic Data Profiles
 
-In this case we generate daily profiles of the number of claims submitted by each AccountNumber. To do so is a four step process.
+In this case we generate daily profiles of the number of claims submitted by each AccountNumber. This process is summarized in four steps.
 
 1. Generate a daily sequence from Jan 1, 2000 to today.    
 2. Create a table of Count = 0 for each day from the start of the data to today.    
 3. Summarize the counts (of eClaims submitted) to daily dates by ID (AccountNumber).    
 4. Join the summarized counts to include zeros on dates where no eClaims were submitted.    
 
-This approach is agnostic to both summary level (here it's days) and ID (here it's AccountNumber). 
+This approach is agnostic to both summary level (here it's days) and ID (here it's AccountNumber). Below are the two SQL files that generate the daily data profiles by AccountNumber.
 
 
 ```{sql sqlCalendarDays, echo = T, eval = F}
@@ -211,7 +211,9 @@ K-means clustering is an unsupervised machine learning method that requires no r
     - time series clustering    
     - preferable but not scaled for our needs
 
-The sparklyr version ran in six minutes (compared to two hours for the base R version). 
+The sparklyr version ran in six minutes (compared to two hours for the base R version), which made that function the best solution of the five options. In theory natural preference would be to use a time-series clustering approach like dtwClust::tsclust(), however, that function doesn't scale well.  
+
+[INSERT cluster results]
 
 
 #### Cut-Point Algorithm
