@@ -1,10 +1,11 @@
 #' cutPoint_trelliscope
 #'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' Intended to take data from long SQL Server table format
+#' @param data Must include, at minimum, following columns:    
+#' 1. AccountNumber -- Unique numeric identifier --    
+#' 2. Date -- Daily consecutive --    
+#' 3. Count -- Must include all real numbers --    
+#' Intended to take data from long SQL Server table format    
+#' @param movAvg Moving Average -- Defaults to 21    
 #'
 #' @import tidyverse trelliscopejs pracma magrittr
 #' 
@@ -12,9 +13,9 @@
 #' @export
 #' 
 #' @examples test
-cutPoint_trelliscope <- function(data) {
+cutPoint_trelliscope <- function(data, movAvg = 21) {
   
-  rawData %<>%
+  rawData <- data %>%
     mutate(AccountNumber = as.character(AccountNumber))
   
   cutData <- rawData %>%
@@ -29,7 +30,7 @@ cutPoint_trelliscope <- function(data) {
     filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
     group_by(AccountNumber) %>%
-    mutate(M_AVG = movavg(Count, 21, "s")) %>%
+    mutate(M_AVG = movavg(Count, movAvg, "s")) %>%
     nest() %>%
     mutate(startDate = cutData$startDate,
            zeroDate = cutData$zeroDate,

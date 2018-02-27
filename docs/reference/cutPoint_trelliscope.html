@@ -94,7 +94,7 @@
     <p>cutPoint_trelliscope</p>
     
 
-    <pre class="usage"><span class='fu'>cutPoint_trelliscope</span>(<span class='no'>data</span>)</pre>
+    <pre class="usage"><span class='fu'>cutPoint_trelliscope</span>(<span class='no'>data</span>, <span class='kw'>movAvg</span> <span class='kw'>=</span> <span class='fl'>21</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -102,10 +102,14 @@
     <tr>
       <th>data</th>
       <td><p>Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --
+1. AccountNumber -- Unique numeric identifier --    
+2. Date -- Daily consecutive --    
+3. Count -- Must include all real numbers --    
 Intended to take data from long SQL Server table format</p></td>
+    </tr>
+    <tr>
+      <th>movAvg</th>
+      <td><p>Moving Average -- Defaults to 21</p></td>
     </tr>
     </table>
     

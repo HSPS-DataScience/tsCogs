@@ -4,14 +4,16 @@
 \alias{cutPoint_trelliscope}
 \title{cutPoint_trelliscope}
 \usage{
-cutPoint_trelliscope(data)
+cutPoint_trelliscope(data, movAvg = 21)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --
+1. AccountNumber -- Unique numeric identifier --    
+2. Date -- Daily consecutive --    
+3. Count -- Must include all real numbers --    
 Intended to take data from long SQL Server table format}
+
+\item{movAvg}{Moving Average -- Defaults to 21}
 }
 \value{
 trelliscopejs object

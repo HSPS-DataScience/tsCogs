@@ -32,6 +32,7 @@ This package was built to take raw data and identify entities which are at risk 
 
 Note the various macros within the `vignette` section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
 
+
 ## k-means Clustering
 
 
@@ -40,18 +41,11 @@ Note the various macros within the `vignette` section of the metadata block abov
 
 The figure sizes have been customised so that you can easily put two images side-by-side. 
 
-```{r, fig.show='hold'}
+```{r, fig.show='hold', fig.cap = 'figure caption'}
 plot(1:10)
 plot(10:1)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
 
 ## More Examples
 

@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ---- fig.show='hold'----------------------------------------------------
+## ---- fig.show='hold', fig.cap = 'figure caption'------------------------
 plot(1:10)
 plot(10:1)
 
