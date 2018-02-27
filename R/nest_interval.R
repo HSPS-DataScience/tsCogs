@@ -19,8 +19,6 @@
 #'
 #' @examples test
 nest_append_interval <- function(nestTib, rawData, type, interval) {
-  
-  library(tidyverse)
 
   organizedData <- nest_interval(rawData, type, interval)
 
@@ -52,11 +50,6 @@ nest_append_interval <- function(nestTib, rawData, type, interval) {
 #'
 #' @examples test
 nest_interval <- function(data, type, interval) {
-  
-  devtools::use_package("tidyverse")
-  devtools::use_package("lubridate")
-  devtools::use_package("purr")
-  devtools::use_package("Hmisc")
 
   derefType <- "type"
 
@@ -127,9 +120,6 @@ nest_interval <- function(data, type, interval) {
 #' @examples test
 nest_core_interval <- function(data, type, interval, divide) {
   
-  devtools::use_package("tidyverse")
-  devtools::use_package("Hmisc")
-
   letter <- capitalize(substr(type, 1, 1))
 
   data %>%

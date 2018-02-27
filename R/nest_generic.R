@@ -20,8 +20,6 @@
 #' @examples test
 nest_todo <- function(data) {
   
-  devtools::use_package("tidyverse")
-  
   day <- nest_core(data, "day")
   week <- nest_core(data, "week")
   month <- nest_core(data, "month")
@@ -66,10 +64,6 @@ nest_todo <- function(data) {
 #' @examples test
 nest_core <- function(data, type) {
   
-  devtools::use_package("tidyverse")
-  devtools::use_package("lubridate")
-  devtools::use_package("Hmisc")
-
   tmpColName <- capitalize(type)
   letter <- capitalize(substr(type, 1, 1))
 

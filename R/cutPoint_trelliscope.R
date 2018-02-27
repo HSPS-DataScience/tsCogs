@@ -12,7 +12,7 @@
 #' @export
 #' 
 #' @examples test
-cutPoint_Trelliscope <- function(data) {
+cutPoint_trelliscope <- function(data) {
   
   rawData %<>%
     mutate(AccountNumber = as.character(AccountNumber))
@@ -21,7 +21,7 @@ cutPoint_Trelliscope <- function(data) {
     rename(Date = ymd) %>%
     filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
-    cut_Points() %>%
+    cut_point() %>%
     slice(1)
   
   rawData %>%

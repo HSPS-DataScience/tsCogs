@@ -13,6 +13,7 @@
 #'
 #' @examples test
 gen_trelliscope <- function(data) {
+  
   data %>%
     select(-features) %>%
     gather("Date", "Count", -AccountNumber, -prediction) %>%

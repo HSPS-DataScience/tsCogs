@@ -13,6 +13,7 @@
 #' 
 #' @examples test
 normalize_weekly <- function(data) {
+  
   data %>%
     as.tibble() %>%
     rename(Date = ymd) %>%

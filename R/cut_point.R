@@ -1,4 +1,4 @@
-#' cut_Points
+#' cut_point
 #'
 #' @param data Must include, at minimum, following columns:
 #' 1. AccountNumber -- Unique numeric identifier --
@@ -15,13 +15,10 @@
 #' @export
 #'
 #' @examples test
-cut_Points <- function(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1, dialBack = 0) {
-  
-  devtools::use_package("tidyverse")
-  devtools::use_package("lubridate")
-  
+cut_point <- function(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1, dialBack = 0) {
+
   data %>%
-    filter(Cluster3 == "Dropped") %>%
+    #filter(Cluster3 == "Dropped") %>%
     group_by(AccountNumber) %>%
     arrange(Date) %>%
     # calculate startDate #
