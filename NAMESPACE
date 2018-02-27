@@ -2,6 +2,7 @@
 
 export(cluster_trelliscope)
 export(cut_Points)
+export(cut_Points333)
 export(find_LadderSequence)
 export(find_SignedSequence)
 export(gen_trelliscope)

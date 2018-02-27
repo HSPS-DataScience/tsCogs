@@ -10,11 +10,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Billy Bob" />
+<meta name="author" content="Joseph Clark &amp; Trenton Pulsipher" />
 
-<meta name="date" content="2018-02-26" />
+<meta name="date" content="2018-02-27" />
 
-<title>Vignette Title</title>
+<title>tsCogs: a time-series cognostic/feature generation and modeling package</title>
 
 
 
@@ -68,31 +68,35 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Vignette Title</h1>
-<h4 class="author"><em>Billy Bob</em></h4>
-<h4 class="date"><em>2018-02-26</em></h4>
+<h1 class="title toc-ignore">tsCogs: a time-series cognostic/feature generation and modeling package</h1>
+<h4 class="author"><em>Joseph Clark &amp; Trenton Pulsipher</em></h4>
+<h4 class="date"><em>2018-02-27</em></h4>
 
 
 
-<p>Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The <code>html_vignette</code> output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The <code>html_vignette</code> format:</p>
+<p>This package was built to take raw data and identify entities which are at risk of negatively changing their behavior. The steps and details involved include:</p>
 <ul>
-<li>Never uses retina figures</li>
-<li>Has a smaller default figure size</li>
-<li>Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style</li>
+<li>create a time-series profile from raw transactional data,<br />
+</li>
+<li>determine “truth” via k-means clustering on the shape (normalized) of the time-series profiles,<br />
+</li>
+<li>flexibly limit both start and end of the time-series profile for modeling purposes,<br />
+</li>
+<li>create generic feature set related to the time-series profiles,<br />
+</li>
+<li>apply a machine learning algorithm to model/predict risk of behavior change,<br />
+</li>
+<li>pass along details and attributes for each entity not used in each stage list above but useful in driver analysis and other post-prediction efforts.</li>
 </ul>
-<div id="vignette-info" class="section level2">
-<h2>Vignette Info</h2>
+<div id="time-series-profile-creation" class="section level2">
+<h2>Time-series Profile Creation</h2>
 <p>Note the various macros within the <code>vignette</code> section of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the <code>title</code> field and the <code>\VignetteIndexEntry</code> to match the title of your vignette.</p>
 </div>
-<div id="styles" class="section level2">
-<h2>Styles</h2>
-<p>The <code>html_vignette</code> template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:</p>
-<pre><code>output: 
-  rmarkdown::html_vignette:
-    css: mystyles.css</code></pre>
+<div id="k-means-clustering" class="section level2">
+<h2>k-means Clustering</h2>
 </div>
-<div id="figures" class="section level2">
-<h2>Figures</h2>
+<div id="cut-point-algorithm" class="section level2">
+<h2>Cut-Point Algorithm</h2>
 <p>The figure sizes have been customised so that you can easily put two images side-by-side.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">plot</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">10</span>)
 <span class="kw">plot</span>(<span class="dv">10</span><span class="op">:</span><span class="dv">1</span>)</code></pre></div>
