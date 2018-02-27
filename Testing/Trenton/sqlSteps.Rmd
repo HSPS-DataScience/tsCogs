@@ -1,7 +1,7 @@
 ---
 title: "Model Training Documentation"
-author: "Joseph & Trenton"
-date: "February 21, 2018"
+author: "Trenton Pulsipher & Joseph Clark"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -22,7 +22,7 @@ The code and method were initially generated, and will be shared here, using eCl
 
 ### Raw Transactional Data
 
-Jeremie created and runs a script against the production archive to generate a table called *dbo.Claim* on both the DTXHIPAA and EZDHIPAA databases on HSPSDATA. The following view, temporary called *dbo.vwTrentonV2*, in the SupportReports database on HSPSDATA joins a few fields from the *dbo.Claim* table to ultimately tie each ClaimID to an AccountNumber (from Siebel). 
+Jeremie created and runs a script against the production archive to generate a table called *dbo.Claim* on both the DTXHIPAA and EZDHIPAA databases on HSPSDATA. The following view, temporary called *dbo.vweClaimRawData*, in the SupportReports database on HSPSDATA joins a few fields from the *dbo.Claim* table to ultimately tie each ClaimID to an AccountNumber (from Siebel). 
 
 Chad Crawford helped identify an improvement in query speed by moving the DISTINCT selection (necessary because *Siebel.dbo.Assets* duplicates data) inside and apply it to only the data joined from *dbo.Practice*, *dbo.Assets*, *dbo.Accounts*, thus avoiding applying it to the larger *dbo.Claim* or joined *dbo.File_Record* tables.
 
@@ -137,54 +137,57 @@ WHILE @StartDate <= @EndDate
 /** https://stackoverflow.com/questions/19075098/how-to-fill-missing-dates-by-groups-in-a-table-in-sql **/
 /**	https://stackoverflow.com/questions/7824831/generate-dates-between-date-ranges **/
 
+/****** Three scripts to create full/expanded daily profiles of eClaim data ******/
 
-/** Create the zero daily profile to fill in zeros on the byAccountNumber count data (<1 sec) **/
-DECLARE @startDate DATE = '20141001', @endDate DATE = '20160101' --GETDATE()
-
-SELECT DATEADD(DAY, nbr - 1, @startDate) AS ymd
-	, 0 AS Count
-	INTO SupportReports.dbo.dailyZero
-FROM (
-  SELECT ROW_NUMBER() OVER( ORDER BY c.object_id ) AS Nbr
-	FROM [SupportReports].[dbo].[calendarDate] AS c
-	) AS nbrs
-WHERE nbr - 1 <= DATEDIFF(DAY, @startDate, @endDate)
-
-
-/** daily (with holes) counts of claims by AccountNumber (2.5 min) **/
-SELECT AccountNumber
-	, CONVERT(DATE,[Create_Date]) AS ymd
-	--, DATEPART(HOUR, Create_Date) AS hour
-	, COUNT(*) AS Count
-	INTO SupportReports.dbo.eClaimDailyProfiles
-FROM [SupportReports].[dbo].[vwTrentonV2]
-WHERE Claim_State IN ('ACCEPTED', 'SETTLED', 'SETTLED ')
-GROUP BY AccountNumber, CONVERT(DATE,[Create_Date])--, DATEPART(HOUR, Create_Date) 
+/****** Script to generate daily zeros from [SupportReports].[dbo].[calendarDate] ******/
+DECLARE @startDate DATE= '20141001', @endDate DATE= GETDATE();
+SELECT DATEADD(DAY, nbr - 1, @startDate) AS ymd,
+       0 AS Count
+INTO [SupportReports].[dbo].[dailyZero]
+FROM
+(
+    SELECT ROW_NUMBER() OVER(ORDER BY c.CalendarDate) AS Nbr
+    FROM [SupportReports].[dbo].[calendarDays] c
+) AS nbrs
+WHERE nbr - 1 <= DATEDIFF(DAY, @startDate, @endDate);
 
 
-/** join of daily claims counts filled in by zeros (28 sec) **/
-DECLARE @startDate DATE = '20141001', @endDate DATE = GETDATE()
+/****** Script to generate SupportReports.dbo.eClaimDailyProfiles (3 min) ******/
+SELECT AccountNumber,
+       CONVERT(DATE, [Create_Date]) AS ymd,
+       COUNT(*) AS Count
+INTO [SupportReports].[dbo].[eClaimDailyProfiles]
+FROM [SupportReports].[dbo].[vweClaimRawData]
+WHERE Claim_State IN('ACCEPTED', 'SETTLED', 'SETTLED ')
+GROUP BY AccountNumber,
+         CONVERT(DATE, [Create_Date]);
 
-SELECT dailyZeroAccount.AccountNumber 
-	, dailyZeroAccount.ymd
-	, COALESCE(eClaimDailyProfiles.Count, 0) AS Count
-	INTO SupportReports.dbo.eClaimDailyProfilesExpanded
-FROM (
-	SELECT AccountNumber, ymd--, Count
-	FROM (
-		SELECT AccountNumber, @startDate AS minYMD, @endDate AS maxYMD
-		FROM SupportReports.dbo.eClaimDailyProfiles
+
+/****** Script to generate SupportReports.dbo.eClaimDailyProfilesExpanded (1 min) ******/
+DECLARE @startDate DATE= '20141001', @endDate DATE= GETDATE();
+SELECT dailyZeroAccount.AccountNumber,
+       dailyZeroAccount.ymd,
+       COALESCE(eClaimDailyProfiles.Count, 0) AS Count
+INTO [SupportReports].[dbo].[eClaimDailyProfilesExpanded]
+FROM
+(
+    SELECT AccountNumber,
+           ymd
+    FROM
+	(
+		SELECT AccountNumber,
+			@startDate AS minYMD,
+			@endDate AS maxYMD
+		FROM [SupportReports].[dbo].[eClaimDailyProfiles]
 		GROUP BY AccountNumber
 	) AS tmp
-	CROSS JOIN SupportReports.dbo.dailyZero AS dailyZero
+	CROSS JOIN [SupportReports].[dbo].[dailyZero] AS dailyZero
 		WHERE dailyZero.ymd BETWEEN tmp.minYMD AND tmp.maxYMD
 ) AS dailyZeroAccount
-	LEFT JOIN 
-	SupportReports.dbo.eClaimDailyProfiles AS eClaimDailyProfiles
-	ON dailyZeroAccount.AccountNumber = eClaimDailyProfiles.AccountNumber AND 
-		 dailyZeroAccount.ymd = eClaimDailyProfiles.ymd
-	
-ORDER BY dailyZeroAccount.AccountNumber, dailyZeroAccount.ymd;
+LEFT JOIN [SupportReports].[dbo].[eClaimDailyProfiles] AS eClaimDailyProfiles ON dailyZeroAccount.AccountNumber = eClaimDailyProfiles.AccountNumber 
+	AND dailyZeroAccount.ymd = eClaimDailyProfiles.ymd
+	ORDER BY dailyZeroAccount.AccountNumber,
+		dailyZeroAccount.ymd; 
 
 ```
 
