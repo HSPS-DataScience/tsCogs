@@ -19,7 +19,7 @@ kMeans_sparkly <- function(data) {
                             "rawData", overwrite = TRUE)
   
   mlKmeans <- normalData_tbl %>%
-    ml_kmeans(~.-AccountNumber, centers = 200)
+    ml_kmeans(~.-AccountNumber, centers = 200, seed = 1234)
   
   ml_predict(mlKmeans, normalData_tbl) %>%
     as_tibble()

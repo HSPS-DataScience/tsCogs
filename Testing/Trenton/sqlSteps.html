@@ -11,7 +11,7 @@
 
 <meta name="author" content="Trenton Pulsipher &amp; Joseph Clark" />
 
-<meta name="date" content="2018-02-27" />
+<meta name="date" content="2018-02-28" />
 
 <title>Model Training Documentation</title>
 
@@ -121,7 +121,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Model Training Documentation</h1>
 <h4 class="author"><em>Trenton Pulsipher &amp; Joseph Clark</em></h4>
-<h4 class="date"><em>2018-02-27</em></h4>
+<h4 class="date"><em>2018-02-28</em></h4>
 
 </div>
 
@@ -296,6 +296,19 @@ LEFT JOIN [SupportReports].[dbo].[eClaimDailyProfiles] AS eClaimDailyProfiles ON
     ORDER BY dailyZeroAccount.AccountNumber,
         dailyZeroAccount.ymd; 
 </code></pre>
+<pre class="r"><code>library(RODBC)
+library(tictoc)
+
+tic()
+###  Read in Daily Profiles of eClaims submissions created in SQL table  ###
+sqlFilename &lt;- 'dbo.eClaimDailyProfilesExpanded' # 4.2 mins, ~625 Mb, ~40.8 M rows for new data
+cn &lt;- odbcDriverConnect(&quot;Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;&quot;,
+                       believeNRows = F)
+d &lt;- sqlFetch(cn, sqlFilename) 
+toc()
+
+saveRDS(d, file = &quot;~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds&quot;)
+# load(&quot;~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds&quot;)</code></pre>
 </div>
 <div id="cluster-and-cut-point-algorithm" class="section level3">
 <h3>Cluster and Cut-Point Algorithm</h3>

@@ -5,14 +5,19 @@
 #' 2. Many date columns, with weekly counts within cells -- Weekly consecutive --
 #' 3. features
 #' 4. prediction
+#' @param log10 scale the y-axis by log base 10, defaults to FALSE
+#' @param name name of the trelliscope view, defaults to "Cluster Results"
+#' @param group group of trelliscope views, defaults to "common"
+#' @param path the base directory of trelliscope app, defaults to "~/trelliscope"
+#' @param selfContained defaults to TRUE
 #' Intended to take data in weekly long format for trelliscope use
-#' @import tidyverse lubridate trelliscope
+#' @import tidyverse lubridate trelliscopejs rbokeh
 #' 
-#' @return trelliscope
+#' @return trelliscopejs
 #' @export
 #'
 #' @examples test
-gen_trelliscope <- function(data) {
+gen_trelliscope <- function(data, log10 = FALSE, name = "Cluster Results", group = "common", path = "~/trelliscope", selfContained = T) {
   
   data %>%
     select(-features) %>%
@@ -27,13 +32,18 @@ gen_trelliscope <- function(data) {
         mean = mean(.$Count),
         sd = sd(.$Count),
         cv = (sd(.$Count) / mean(.$Count)),
-        C_AN = sum(.$Count) / length(unique(.$AccountNumber))
+        countsPerAcctNum = sum(.$Count) / length(unique(.$AccountNumber))
       )),
-      panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count, group = AccountNumber)) +
-                         geom_line(alpha = .05) +
-                         theme_bw() +
-                         labs(x = "Date", y = "Count")
+      panel = map_plot(data, 
+                       # ~ ggplot(., aes(x = Date, y = Count, group = AccountNumber)) +
+                       #   geom_line(alpha = .05) +
+                       #   theme_bw() +
+                       #   labs(x = "Date", y = "Count")
+                       ~ figure(., ylab = "Normalized Count") %>%
+                         ly_lines(x = Date, y = Count, group = AccountNumber, alpha = .05, legend = F) %>%
+                         y_axis(log = log10) 
+                         
       )
     ) %>%
-    trelliscope("Cluster Results", self_contained = T)
+    trelliscope(name, group = group, path = path, self_contained = selfContained)
 }

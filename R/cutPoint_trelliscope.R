@@ -15,19 +15,19 @@
 #' @examples test
 cutPoint_trelliscope <- function(data, movAvg = 21) {
   
-  rawData <- data %>%
-    mutate(AccountNumber = as.character(AccountNumber))
+  # rawData <- data %>%
+  #   mutate(AccountNumber = as.character(AccountNumber))
   
-  cutData <- rawData %>%
-    rename(Date = ymd) %>%
-    filter(AccountNumber %in% AN) %>%
+  cutData <- data %>%
+    # rename(Date = ymd) %>%
+    # filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
     cut_point() %>%
     slice(1)
   
   rawData %>%
-    rename(Date = ymd) %>%
-    filter(AccountNumber %in% AN) %>%
+    # rename(Date = ymd) %>%
+    # filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
     group_by(AccountNumber) %>%
     mutate(M_AVG = movavg(Count, movAvg, "s")) %>%
@@ -42,10 +42,10 @@ cutPoint_trelliscope <- function(data, movAvg = 21) {
     mutate(
       panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
                          geom_line(aes(y = M_AVG)) +
-                         geom_vline(aes(xintercept = startDate), color = "blue") +
+                         geom_vline(aes(xintercept = startDate), color = "blue", linetype = 3) +
                          geom_vline(aes(xintercept = zeroDate), color = "green") +
                          geom_vline(aes(xintercept = endDate), color = "red") +
-                         geom_vline(aes(xintercept = cutDate), color = "orange") +
+                         geom_vline(aes(xintercept = cutDate), color = "orange", linetype = 3) +
                          theme_bw() +
                          labs(x = "Date", y = "Count")
       )

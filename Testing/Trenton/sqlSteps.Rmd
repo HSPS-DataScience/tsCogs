@@ -192,6 +192,23 @@ LEFT JOIN [SupportReports].[dbo].[eClaimDailyProfiles] AS eClaimDailyProfiles ON
 ```
 
 
+```{r readInData, eval = F}
+library(RODBC)
+library(tictoc)
+
+tic()
+###  Read in Daily Profiles of eClaims submissions created in SQL table  ###
+sqlFilename <- 'dbo.eClaimDailyProfilesExpanded' # 4.2 mins, ~625 Mb, ~40.8 M rows for new data
+cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
+                       believeNRows = F)
+d <- sqlFetch(cn, sqlFilename) 
+toc()
+
+saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
+# load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
+```
+
+
 ### Cluster and Cut-Point Algorithm
 
 #### k-means Clustering
@@ -215,6 +232,10 @@ K-means clustering is an unsupervised machine learning method that requires no r
     - preferable but not scaled for our needs
 
 The sparklyr version ran in six minutes (compared to two hours for the base R version), which made that function the best solution of the five options. In theory natural preference would be to use a time-series clustering approach like dtwClust::tsclust(), however, that function doesn't scale well.  
+
+```{r clusterAnalysis, eval = F}
+
+```
 
 [INSERT cluster results]
 
