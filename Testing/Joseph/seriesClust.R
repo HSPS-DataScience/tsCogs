@@ -11,7 +11,7 @@ d <- nasd16 %>%
 set.seed(1234)
 # k-means clustering with 2, 5, and 9 clusters
 tic()
-km <- get_kmeans(d, x = "month", y = "close_scl", k = c(2, 5, 9, 100, 200))
+km <- get_kmeans(d, x = "month", y = "close_scl", k = c(2, 5, 9, 100))
 plot_scree(km)
 toc()
 plot_clust(km, 9)
