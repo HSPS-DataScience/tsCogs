@@ -1,0 +1,68 @@
+---
+title: "manyTrelli"
+output: 
+  html_document:
+    self_contained: false
+    lib_dir: rmarkdown_files
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+library(tsCogs)
+library(tidyr)
+library(rbokeh)
+library(htmltools)
+
+d <- mpg %>%
+  group_by(manufacturer, class) %>%
+  nest() %>%
+  mutate(panel = map_plot(data,
+                          ~ figure(xlab = "City mpg", ylab = "Highway mpg") %>%
+                            ly_points(cty, hwy, data = .x)))
+
+bob <- d %>%
+  trelliscope(name = "city_vs_highway_mpg", path = "one_trelli",
+              self_contained = TRUE)
+
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+<iframe src="one_trelli/index.html"><\iframe>
+
+
+```{r}
+library(tsCogs)
+library(tidyr)
+library(rbokeh)
+library(htmltools)
+
+d <- mpg %>%
+  group_by(manufacturer, class) %>%
+  nest() %>%
+  mutate(panel = map_plot(data,
+                          ~ figure(xlab = "City mpg", ylab = "Highway mpg") %>%
+                            ly_points(cty, hwy, data = .x)))
+
+joe <- d %>%
+  trelliscope(name = "city_vs_highway_mpg", path = "two_trelli",
+              self_contained = TRUE)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+<iframe src="two_trelli/index.html"><\iframe>
+
