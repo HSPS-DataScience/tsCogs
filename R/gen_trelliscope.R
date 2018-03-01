@@ -35,10 +35,6 @@ gen_trelliscope <- function(data, log10 = FALSE, name = "Cluster Results", group
         countsPerAcctNum = sum(.$Count) / length(unique(.$AccountNumber))
       )),
       panel = map_plot(data, 
-                       # ~ ggplot(., aes(x = Date, y = Count, group = AccountNumber)) +
-                       #   geom_line(alpha = .05) +
-                       #   theme_bw() +
-                       #   labs(x = "Date", y = "Count")
                        ~ figure(., ylab = "Normalized Count") %>%
                          ly_lines(x = Date, y = Count, group = AccountNumber, alpha = .05, legend = F) %>%
                          y_axis(log = log10) 

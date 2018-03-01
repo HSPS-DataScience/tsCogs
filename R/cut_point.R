@@ -18,7 +18,6 @@
 cut_point <- function(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1, dialBack = 0) {
 
   data %>%
-    #filter(Cluster3 == "Dropped") %>%
     group_by(AccountNumber) %>%
     arrange(Date) %>%
     # calculate startDate #
