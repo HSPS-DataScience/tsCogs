@@ -18,7 +18,7 @@ gen_trelliscope(data, log10 = FALSE, name = "Cluster Results",
 
 \item{name}{name of the trelliscope view, defaults to "Cluster Results"}
 
-\item{group}{group of trelliscope views, defaults to "common"}
+\item{group}{group of trelliscope views -- defaults to "common"}
 
 \item{path}{the base directory of trelliscope app, defaults to "~/trelliscope"}
 

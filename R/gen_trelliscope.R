@@ -7,7 +7,7 @@
 #' 4. prediction
 #' @param log10 scale the y-axis by log base 10, defaults to FALSE
 #' @param name name of the trelliscope view, defaults to "Cluster Results"
-#' @param group group of trelliscope views, defaults to "common"
+#' @param group group of trelliscope views -- defaults to "common"
 #' @param path the base directory of trelliscope app, defaults to "~/trelliscope"
 #' @param selfContained defaults to TRUE
 #' Intended to take data in weekly long format for trelliscope use

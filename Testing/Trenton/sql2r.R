@@ -1,15 +1,13 @@
 
 library(tsCogs)
-library(tidyverse)
-library(lubridate) # time
 library(RODBC) # read SQL tables
-library(cluster)
-library(sparklyr)
-library(tictoc)
-library(Hmisc)
-library(pracma)
-library(trelliscopejs)
-library(magrittr)
+# library(cluster)
+# library(sparklyr)
+# library(tictoc)
+# library(Hmisc)
+# library(pracma)
+# library(trelliscopejs)
+# library(magrittr)
 
 
 tic()
@@ -24,25 +22,49 @@ saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 # load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 
 # make minor initial adjustments
+tic()
 rawData <- d %>%
   mutate(AccountNumber = as.character(AccountNumber)) %>%
   as.tibble() %>%
   rename(Date = ymd) %>%
   group_by(AccountNumber) %>%
   filter(!is.na(AccountNumber),
-         Date >= ymd("2014-11-01")) %>%
+         Date >= ymd("2014-11-01"),
+         Date <= ymd("2018-02-24")) %>%
   arrange(Date)
+toc()
 
-# normalize (shape) data as weekly profiles
-normWeekData <- normalize_weekly(rawData) 
+# run cutPoint algorithm 
+tic()
+cutData <- rawData %>% 
+  cut_point()
+toc()
 
-# cluster using kmeans
-clusterData <- normWeekData %>%
-    kMeans_sparkly() 
+
+# apply rules (1 - >600 claims total, 2 - >90 days of claims)
+tic()
+cutData %<>%
+  group_by(AccountNumber) %>%
+  mutate(totalCount = sum(Count),
+         numDays = n()) %>%
+  filter(totalCount >= 600,
+         numDays >= 90)
+toc()
 
 
-clusterData %>%
-    gen_trelliscope()
+# normalize (shape) data as weekly profiles and cluster using kmeans
+tic()
+clusterData <- rawData %>%
+  filter(!(AccountNumber %in%
+             cutData %>%
+             pull(AccountNumber)))# %>%
+toc()
+  normalize_weekly() %>%
+  kMeans_sparkly() 
+
+
+# clusterData %>%
+#     gen_trelliscope()
 
 
 
