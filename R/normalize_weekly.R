@@ -15,18 +15,13 @@
 normalize_weekly <- function(data) {
   
   data %>%
-    # as.tibble() %>%
-    # rename(Date = ymd) %>%
-    # group_by(AccountNumber) %>%
-    # filter(!is.na(AccountNumber)) %>%
-    # arrange(Date) %>%
     # Create week number and summarise by week
     mutate(Week = floor_date(Date, "week")) %>%
     group_by(AccountNumber, Week) %>%
     summarise(Count = sum(Count)) %>% #n()) %>%
     rename(Date = Week) %>%
     arrange(Date) %>%
-    # normalize the profiles
+    # Normalize the profiles
     mutate(meanCount = mean(Count, na.rm = T), 
            normCount = Count / meanCount) %>%
     select(AccountNumber, Date, normCount) %>%

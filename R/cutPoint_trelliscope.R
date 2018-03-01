@@ -15,19 +15,12 @@
 #' @examples test
 cutPoint_trelliscope <- function(data, movAvg = 21) {
   
-  # rawData <- data %>%
-  #   mutate(AccountNumber = as.character(AccountNumber))
-  
   cutData <- data %>%
-    # rename(Date = ymd) %>%
-    # filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
     cut_point() %>%
     slice(1)
   
   rawData %>%
-    # rename(Date = ymd) %>%
-    # filter(AccountNumber %in% AN) %>%
     arrange(AccountNumber, Date) %>%
     group_by(AccountNumber) %>%
     mutate(M_AVG = movavg(Count, movAvg, "s")) %>%
