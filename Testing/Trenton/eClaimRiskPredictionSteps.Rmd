@@ -192,9 +192,19 @@ LEFT JOIN [SupportReports].[dbo].[eClaimDailyProfiles] AS eClaimDailyProfiles ON
 ```
 
 
+Read the SQL table into R to:     
+1. generate a *real* profile,     
+2. remove accounts that weren't customers for a sufficient time,    
+3. determine **Truth** (Healthy or Dropped) using k-means clustering,    
+4. create cognostics/feature set for modeling,    
+5. model using machine learning algorithms,    
+6. validate model and show prediction accuracy metrics,    
+6. store information/model for prediction in operational weekly setting.    
+
+
 ```{r readInData, eval = F}
+library(tsCogs)
 library(RODBC)
-library(tictoc)
 
 tic()
 ###  Read in Daily Profiles of eClaims submissions created in SQL table  ###
@@ -209,9 +219,46 @@ saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 ```
 
 
-### Cluster and Cut-Point Algorithm
+### Cut-Point Algorithm
 
-#### k-means Clustering
+```{r cutpt, eval = F}
+# make minor initial adjustments
+tic()
+rawData <- d %>%
+  mutate(AccountNumber = as.character(AccountNumber)) %>%
+  as.tibble() %>%
+  rename(Date = ymd) %>%
+  group_by(AccountNumber) %>%
+  filter(!is.na(AccountNumber),
+         Date >= ymd("2014-11-01"),
+         Date <= ymd("2018-02-24")) %>%
+  arrange(Date)
+toc()
+
+# run cutPoint algorithm (5 mins)
+tic()
+cutData <- rawData %>% 
+  cut_point()
+toc()
+
+
+# apply rules: >600 claims total and >90 days of claims (14 sec) (removed roughly 5,500 accounts)
+tic()
+cutData %<>%
+  group_by(AccountNumber) %>%
+  mutate(totalCount = sum(Count),
+         numDays = n()) %>%
+  filter(totalCount >= 600,
+         numDays >= 90)
+toc()
+
+# grab only AccountNumber after applying the rules
+keepIDs <- cutData %>%
+  pull(AccountNumber)
+```
+
+
+### k-means Clustering to determine Truth
 
 K-means clustering is an unsupervised machine learning method that requires no response variable (truth) for model fitting. This allowed us to generate the truth as a function of the clustering output. A good visual animated example of kmeans clustering is given [here](http://shabal.in/visuals/kmeans/1.html). We examined several different functions/algorithms implementing kmeans clustering, including:
 
@@ -238,10 +285,6 @@ The sparklyr version ran in six minutes (compared to two hours for the base R ve
 ```
 
 [INSERT cluster results]
-
-
-#### Cut-Point Algorithm
-
 
 ### Usage Profile Feature Set
 

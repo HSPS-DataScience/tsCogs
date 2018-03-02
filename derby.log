@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Fri Mar 02 08:58:06 MST 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0161-e76f-4cb6-000000b780d8 
+Fri Mar 02 14:10:39 MST 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0161-e88d-71d2-000000737878 
 on database directory memory:C:\Users\trenton.pulsipher\Documents\R\r_prjs\tsCogs\databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@176f30a 
 Loaded from file:/C:/Users/trenton.pulsipher/AppData/Local/spark/spark-2.2.0-bin-hadoop2.7/jars/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation

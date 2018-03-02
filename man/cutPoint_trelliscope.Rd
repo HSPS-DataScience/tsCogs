@@ -4,7 +4,9 @@
 \alias{cutPoint_trelliscope}
 \title{cutPoint_trelliscope}
 \usage{
-cutPoint_trelliscope(data, movAvg = 21)
+cutPoint_trelliscope(data, movAvg = 21, trans = "identity",
+  name = "cutPoint Results", group = "common", path = "~/trelliscope",
+  selfContained = F)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
@@ -14,6 +16,16 @@ cutPoint_trelliscope(data, movAvg = 21)
 Intended to take data from long SQL Server table format}
 
 \item{movAvg}{Moving Average -- Defaults to 21}
+
+\item{trans}{scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --}
+
+\item{name}{name of the trelliscope view -- defaults to "Cluster Results" --}
+
+\item{group}{group of trelliscope views -- defaults to "common" --}
+
+\item{path}{the base directory of trelliscope app -- defaults to "~/trelliscope" --}
+
+\item{selfContained}{create the individual pre-rendered panels -- defaults to FALSE --}
 }
 \value{
 trelliscopejs object

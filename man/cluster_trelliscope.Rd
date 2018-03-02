@@ -4,17 +4,29 @@
 \alias{cluster_trelliscope}
 \title{cluster_trelliscope}
 \usage{
-cluster_trelliscope(data)
+cluster_trelliscope(data, trans = "identity", name = "Cluster Results",
+  group = "common", path = "~/trelliscope", selfContained = F)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
 1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --
-Intended to take data from long SQL Server table format}
+2. Many date columns, with weekly counts within cells -- Weekly consecutive --
+3. features
+4. prediction}
+
+\item{trans}{scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --}
+
+\item{name}{name of the trelliscope view -- defaults to "Cluster Results" --}
+
+\item{group}{group of trelliscope views -- defaults to "common" --}
+
+\item{path}{the base directory of trelliscope app -- defaults to "~/trelliscope" --}
+
+\item{selfContained}{create the individual pre-rendered panels -- defaults to FALSE --
+Intended to take data in weekly long format for trelliscope use}
 }
 \value{
-spread tibble
+trelliscopejs
 }
 \description{
 cluster_trelliscope

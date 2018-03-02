@@ -11,7 +11,7 @@
 
 <meta name="author" content="Trenton Pulsipher &amp; Joseph Clark" />
 
-<meta name="date" content="2018-02-28" />
+<meta name="date" content="2018-03-02" />
 
 <title>Model Training Documentation</title>
 
@@ -121,7 +121,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Model Training Documentation</h1>
 <h4 class="author"><em>Trenton Pulsipher &amp; Joseph Clark</em></h4>
-<h4 class="date"><em>2018-02-28</em></h4>
+<h4 class="date"><em>2018-03-02</em></h4>
 
 </div>
 
@@ -296,8 +296,16 @@ LEFT JOIN [SupportReports].[dbo].[eClaimDailyProfiles] AS eClaimDailyProfiles ON
     ORDER BY dailyZeroAccount.AccountNumber,
         dailyZeroAccount.ymd; 
 </code></pre>
-<pre class="r"><code>library(RODBC)
-library(tictoc)
+<p>Read the SQL table into R to:<br />
+1. generate a <em>real</em> profile,<br />
+2. remove accounts that weren’t customers for a sufficient time,<br />
+3. determine <strong>Truth</strong> (Healthy or Dropped) using k-means clustering,<br />
+4. create cognostics/feature set for modeling,<br />
+5. model using machine learning algorithms,<br />
+6. validate model and show prediction accuracy metrics,<br />
+6. store information/model for prediction in operational weekly setting.</p>
+<pre class="r"><code>library(tsCogs)
+library(RODBC)
 
 tic()
 ###  Read in Daily Profiles of eClaims submissions created in SQL table  ###
@@ -310,10 +318,44 @@ toc()
 saveRDS(d, file = &quot;~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds&quot;)
 # load(&quot;~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds&quot;)</code></pre>
 </div>
-<div id="cluster-and-cut-point-algorithm" class="section level3">
-<h3>Cluster and Cut-Point Algorithm</h3>
-<div id="k-means-clustering" class="section level4">
-<h4>k-means Clustering</h4>
+<div id="cut-point-algorithm" class="section level3">
+<h3>Cut-Point Algorithm</h3>
+<pre class="r"><code># make minor initial adjustments
+tic()
+rawData &lt;- d %&gt;%
+  mutate(AccountNumber = as.character(AccountNumber)) %&gt;%
+  as.tibble() %&gt;%
+  rename(Date = ymd) %&gt;%
+  group_by(AccountNumber) %&gt;%
+  filter(!is.na(AccountNumber),
+         Date &gt;= ymd(&quot;2014-11-01&quot;),
+         Date &lt;= ymd(&quot;2018-02-24&quot;)) %&gt;%
+  arrange(Date)
+toc()
+
+# run cutPoint algorithm (5 mins)
+tic()
+cutData &lt;- rawData %&gt;% 
+  cut_point()
+toc()
+
+
+# apply rules: &gt;600 claims total and &gt;90 days of claims (14 sec) (removed roughly 5,500 accounts)
+tic()
+cutData %&lt;&gt;%
+  group_by(AccountNumber) %&gt;%
+  mutate(totalCount = sum(Count),
+         numDays = n()) %&gt;%
+  filter(totalCount &gt;= 600,
+         numDays &gt;= 90)
+toc()
+
+# grab only AccountNumber after applying the rules
+keepIDs &lt;- cutData %&gt;%
+  pull(AccountNumber)</code></pre>
+</div>
+<div id="k-means-clustering-to-determine-truth" class="section level3">
+<h3>k-means Clustering to determine Truth</h3>
 <p>K-means clustering is an unsupervised machine learning method that requires no response variable (truth) for model fitting. This allowed us to generate the truth as a function of the clustering output. A good visual animated example of kmeans clustering is given <a href="http://shabal.in/visuals/kmeans/1.html">here</a>. We examined several different functions/algorithms implementing kmeans clustering, including:</p>
 <ol style="list-style-type: decimal">
 <li>cluster::kmeans()
@@ -341,10 +383,6 @@ saveRDS(d, file = &quot;~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds&quot;)
 </ol>
 <p>The sparklyr version ran in six minutes (compared to two hours for the base R version), which made that function the best solution of the five options. In theory natural preference would be to use a time-series clustering approach like dtwClust::tsclust(), however, that function doesn’t scale well.</p>
 <p>[INSERT cluster results]</p>
-</div>
-<div id="cut-point-algorithm" class="section level4">
-<h4>Cut-Point Algorithm</h4>
-</div>
 </div>
 <div id="usage-profile-feature-set" class="section level3">
 <h3>Usage Profile Feature Set</h3>

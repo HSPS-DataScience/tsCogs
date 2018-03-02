@@ -6,14 +6,25 @@
 #' 3. Count -- Must include all real numbers --    
 #' Intended to take data from long SQL Server table format    
 #' @param movAvg Moving Average -- Defaults to 21    
+#' @param trans scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --
+#' @param name name of the trelliscope view -- defaults to "Cluster Results" --
+#' @param group group of trelliscope views -- defaults to "common" --
+#' @param path the base directory of trelliscope app -- defaults to "~/trelliscope" --
+#' @param selfContained create the individual pre-rendered panels -- defaults to FALSE --
 #'
-#' @import tidyverse trelliscopejs pracma magrittr
+#' @import tidyverse trelliscopejs pracma magrittr ggplot2 rbokeh
 #' 
 #' @return trelliscopejs object
 #' @export
 #' 
 #' @examples test
-cutPoint_trelliscope <- function(data, movAvg = 21) {
+cutPoint_trelliscope <- function(data, 
+                                 movAvg = 21, 
+                                 trans = "identity", 
+                                 name = "cutPoint Results", 
+                                 group = "common", 
+                                 path = "~/trelliscope", 
+                                 selfContained = F) {
   
   cutData <- data %>%
     arrange(AccountNumber, Date) %>%
@@ -34,14 +45,18 @@ cutPoint_trelliscope <- function(data, movAvg = 21) {
     nest() %>%
     mutate(
       panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
+                         geom_line(alpha = 0.5) +
                          geom_line(aes(y = M_AVG)) +
-                         geom_vline(aes(xintercept = startDate), color = "blue", linetype = 3) +
-                         geom_vline(aes(xintercept = zeroDate), color = "green") +
+                         geom_vline(aes(xintercept = startDate), color = "green", linetype = 3) +
+                         geom_vline(aes(xintercept = zeroDate), color = "red") +
                          geom_vline(aes(xintercept = endDate), color = "red") +
-                         geom_vline(aes(xintercept = cutDate), color = "orange", linetype = 3) +
-                         theme_bw() +
-                         labs(x = "Date", y = "Count")
+                         geom_vline(aes(xintercept = cutDate), color = "green", linetype = 3) +
+                         scale_y_continuous(trans = trans) +
+                         theme_bw() 
       )
     ) %>%
-    trelliscope("Cut-Point Results", self_contained = F)
+    trelliscope(name = name, 
+                group = group, 
+                path = path, 
+                self_contained = selfContained)
 }

@@ -34,14 +34,14 @@ rawData <- d %>%
   arrange(Date)
 toc()
 
-# run cutPoint algorithm 
+# run cutPoint algorithm (5 mins)
 tic()
 cutData <- rawData %>% 
   cut_point()
 toc()
 
 
-# apply rules (1 - >600 claims total, 2 - >90 days of claims) (removed roughly 5,500 accounts)
+# apply rules: >600 claims total and >90 days of claims (14 sec) (removed roughly 5,500 accounts)
 tic()
 cutData %<>%
   group_by(AccountNumber) %>%
@@ -56,45 +56,67 @@ keepIDs <- cutData %>%
   pull(AccountNumber)
 
 # determine cluster size (elbow plot) #
-# run once - had to change some of the spark configuration
-config <- spark_config()
-config$`sparklyr.shell.driver-memory` <- "1G"
-config$`sparklyr.shell.executor-memory` <- "1G"
-config$`spark.yarn.executor.memoryOverhead` <- "512"
-sc <- spark_connect(master = "local", config = config)
-normalData_tbl <- copy_to(sc, 
-                    rawData %>%
-                      ungroup() %>%
-                      filter(AccountNumber %in% keepIDs) %>%
-                      normalize_weekly(), 
-                    "normalData", 
-                    overwrite = TRUE)
-numClusters = c(5,10,20,30,40,50,75,100)
-out = list()
-for(i in 1:length(numClusters)) {
-  mlkModel <- ml_kmeans(normalData_tbl, ~., centers = numClusters[i], seed = 1234)
-  out[[i]] <- ml_compute_cost(mlkModel, normalData_tbl)
-  rm(mlkModel)
-  gc()
-  cat(numClusters[i], " ")
-}
+# run once 
+# config <- spark_config()
+# config$`sparklyr.shell.driver-memory` <- "1G"
+# config$`sparklyr.shell.executor-memory` <- "1G"
+# config$`spark.yarn.executor.memoryOverhead` <- "512"
+# sc <- spark_connect(master = "local", config = config)
+# normalData_tbl <- copy_to(sc, 
+#                     rawData %>%
+#                       ungroup() %>%
+#                       filter(AccountNumber %in% keepIDs) %>%
+#                       normalize_weekly(), 
+#                     "normalData", 
+#                     overwrite = TRUE)
+# numClusters = c(5,10,20,30,40,50,75,100)
+# out = list()
+# for(i in 1:length(numClusters)) {
+#   mlkModel <- ml_kmeans(normalData_tbl, ~., centers = numClusters[i], seed = 1234)
+#   out[[i]] <- ml_compute_cost(mlkModel, normalData_tbl)
+#   rm(mlkModel)
+#   gc()
+#   cat(numClusters[i], " ")
+# }
+# 
+# qplot(x = numClusters[1:length(out)], y = unlist(out)) + 
+#   geom_line() + 
+#   labs(x = "Number of Clusters", y = "Total W/in Sums of Squares") +
+#   theme_bw()
 
-qplot(x = numClusters[1:length(out)], y = unlist(out)) + 
-  geom_line() + 
-  labs(x = "Number of Clusters", y = "Total W/in Sums of Squares") +
-  theme_bw()
 
 
-
-# normalize (shape) data as weekly profiles and cluster using kmeans
+# normalize (shape) data as weekly profiles and cluster using kmeans (2 mins)
 tic()
 clusterData <- rawData %>%
   ungroup() %>%
   filter(AccountNumber %in% keepIDs) %>%
   normalize_weekly() %>%
-  kMeans_sparkly(centers = 100) 
+  kMeans_sparkly(centers = 100) # seed is set inside the function
 toc()
 
+##########
+# assign clusterID and Truth back to cutData
+truthData <- clusterData %>%
+  select(AccountNumber, prediction) %>%
+  mutate(Truth = if_else(prediction %in% c(1:5,7,8,14,15,17,18,20,21,26,28,29,
+                                           31,32,34,35,37,38,40,45,49,51,54,56,57,59,
+                                           60,62:65,57:70,72,75:77,80,84,85,87,
+                                           94,98,99), "Healthy", "Dropped")) %>%
+  select(AccountNumber, prediction, Truth) %>%
+  group_by(AccountNumber) %>%
+  slice(1)
+
+cutPtData <- cutData %>%
+  left_join(truthData)
+
+###  stopped here  ###
+
+
+
+
+
+# trelliscope the cluster results 
 tic()
 clusterData %>%
    gen_trelliscope(trans = "log10", 
@@ -103,6 +125,19 @@ clusterData %>%
                    path = "~/trelliscopeDisplays", 
                    selfContained = F)
 toc()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 clusterData %>%
   filter(prediction == 97) %>%
@@ -153,3 +188,6 @@ rawData %>%
     )
   ) %>%
   trelliscope("Cut-Point Results", self_contained = F)
+
+
+
