@@ -4,7 +4,7 @@
 \alias{gen_trelliscope}
 \title{gen_trelliscope}
 \usage{
-gen_trelliscope(data, log10 = FALSE, name = "Cluster Results",
+gen_trelliscope(data, trans = "identity", name = "Cluster Results",
   group = "common", path = "~/trelliscope", selfContained = T)
 }
 \arguments{
@@ -14,8 +14,6 @@ gen_trelliscope(data, log10 = FALSE, name = "Cluster Results",
 3. features
 4. prediction}
 
-\item{log10}{scale the y-axis by log base 10, defaults to FALSE}
-
 \item{name}{name of the trelliscope view, defaults to "Cluster Results"}
 
 \item{group}{group of trelliscope views -- defaults to "common"}
@@ -24,6 +22,8 @@ gen_trelliscope(data, log10 = FALSE, name = "Cluster Results",
 
 \item{selfContained}{defaults to TRUE
 Intended to take data in weekly long format for trelliscope use}
+
+\item{log10}{scale the y-axis by log base 10, defaults to FALSE}
 }
 \value{
 trelliscopejs

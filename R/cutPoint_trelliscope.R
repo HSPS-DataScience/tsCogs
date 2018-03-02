@@ -20,7 +20,7 @@ cutPoint_trelliscope <- function(data, movAvg = 21) {
     cut_point() %>%
     slice(1)
   
-  rawData %>%
+  data %>%
     arrange(AccountNumber, Date) %>%
     group_by(AccountNumber) %>%
     mutate(M_AVG = movavg(Count, movAvg, "s")) %>%

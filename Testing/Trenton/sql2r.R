@@ -12,14 +12,14 @@ library(RODBC) # read SQL tables
 
 tic()
 ###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
-sqlFilename <- 'dbo.eClaimDailyProfilesExpanded' 
-cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
-                       believeNRows = F)
-d <- sqlFetch(cn, sqlFilename) # 4 mins, ~625 Mb sized object, ~40.8M rows for old data
-toc()
-
-saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
-# load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
+# sqlFilename <- 'dbo.eClaimDailyProfilesExpanded' 
+# cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
+#                        believeNRows = F)
+# d <- sqlFetch(cn, sqlFilename) # 4 mins, ~625 Mb sized object, ~40.8M rows for old data
+# toc()
+# 
+# saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
+load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 
 # make minor initial adjustments
 tic()
@@ -41,7 +41,7 @@ cutData <- rawData %>%
 toc()
 
 
-# apply rules (1 - >600 claims total, 2 - >90 days of claims)
+# apply rules (1 - >600 claims total, 2 - >90 days of claims) (removed roughly 5,500 accounts)
 tic()
 cutData %<>%
   group_by(AccountNumber) %>%
@@ -51,20 +51,105 @@ cutData %<>%
          numDays >= 90)
 toc()
 
+# grab only AccountNumber after applying the rules
+keepIDs <- cutData %>%
+  pull(AccountNumber)
+
+# determine cluster size (elbow plot) #
+# run once - had to change some of the spark configuration
+config <- spark_config()
+config$`sparklyr.shell.driver-memory` <- "1G"
+config$`sparklyr.shell.executor-memory` <- "1G"
+config$`spark.yarn.executor.memoryOverhead` <- "512"
+sc <- spark_connect(master = "local", config = config)
+normalData_tbl <- copy_to(sc, 
+                    rawData %>%
+                      ungroup() %>%
+                      filter(AccountNumber %in% keepIDs) %>%
+                      normalize_weekly(), 
+                    "normalData", 
+                    overwrite = TRUE)
+numClusters = c(5,10,20,30,40,50,75,100)
+out = list()
+for(i in 1:length(numClusters)) {
+  mlkModel <- ml_kmeans(normalData_tbl, ~., centers = numClusters[i], seed = 1234)
+  out[[i]] <- ml_compute_cost(mlkModel, normalData_tbl)
+  rm(mlkModel)
+  gc()
+  cat(numClusters[i], " ")
+}
+
+qplot(x = numClusters[1:length(out)], y = unlist(out)) + 
+  geom_line() + 
+  labs(x = "Number of Clusters", y = "Total W/in Sums of Squares") +
+  theme_bw()
+
+
 
 # normalize (shape) data as weekly profiles and cluster using kmeans
 tic()
 clusterData <- rawData %>%
-  filter(!(AccountNumber %in%
-             cutData %>%
-             pull(AccountNumber)))# %>%
-toc()
+  ungroup() %>%
+  filter(AccountNumber %in% keepIDs) %>%
   normalize_weekly() %>%
-  kMeans_sparkly() 
+  kMeans_sparkly(centers = 100) 
+toc()
+
+tic()
+clusterData %>%
+   gen_trelliscope(trans = "log10", 
+                   name = "Cluster Results 100", 
+                   group = "eClaims", 
+                   path = "~/trelliscopeDisplays", 
+                   selfContained = F)
+toc()
+
+clusterData %>%
+  filter(prediction == 97) %>%
+  select(-features) %>%
+  gather("Date", "Count", -AccountNumber, -prediction) %>%
+  mutate(Date = ymd(Date)) %>%
+  group_by(prediction) %>%
+  ggplot(aes(x = Date, y = Count, color = AccountNumber)) +
+  geom_line(show.legend = FALSE) +
+  scale_y_continuous(trans = "identity") +
+  facet_wrap(~AccountNumber, scales = "free_y") +
+  theme_bw()
+
+rawData %>%
+  filter(AccountNumber == 83600) %>%
+  cutPoint_trelliscope()
 
 
-# clusterData %>%
-#     gen_trelliscope()
+cutData <- rawData %>%
+  filter(AccountNumber == 83600) %>%
+  arrange(AccountNumber, Date) %>%
+  cut_point() %>%
+  slice(1)
 
-
-
+rawData %>%
+  filter(AccountNumber == 83600) %>%
+  arrange(AccountNumber, Date) %>%
+  group_by(AccountNumber) %>%
+  mutate(M_AVG = movavg(Count, 21, "s")) %>%
+  nest() %>%
+  mutate(startDate = cutData$startDate,
+         zeroDate = cutData$zeroDate,
+         endDate = cutData$endDate,
+         cutDate = cutData$cutDate) %>%
+  unnest() %>%
+  group_by(AccountNumber) %>%
+  nest() %>%
+  mutate(
+    panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
+                       geom_line(aes(y = Count, alpha = 0.5)) +
+                       geom_line(aes(y = M_AVG)) +
+                       geom_vline(aes(xintercept = startDate), color = "blue", linetype = 3) +
+                       geom_vline(aes(xintercept = zeroDate), color = "green") +
+                       geom_vline(aes(xintercept = endDate), color = "red") +
+                       geom_vline(aes(xintercept = cutDate), color = "orange", linetype = 3) +
+                       theme_bw() +
+                       labs(x = "Date", y = "Count")
+    )
+  ) %>%
+  trelliscope("Cut-Point Results", self_contained = F)

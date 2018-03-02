@@ -4,7 +4,7 @@
 \alias{kMeans_sparkly}
 \title{kMeans_sparkly}
 \usage{
-kMeans_sparkly(data)
+kMeans_sparkly(data, centers = 10)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:

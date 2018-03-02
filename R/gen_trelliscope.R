@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples test
-gen_trelliscope <- function(data, log10 = FALSE, name = "Cluster Results", group = "common", path = "~/trelliscope", selfContained = T) {
+gen_trelliscope <- function(data, trans = "identity", name = "Cluster Results", group = "common", path = "~/trelliscope", selfContained = T) {
   
   data %>%
     select(-features) %>%
@@ -35,10 +35,14 @@ gen_trelliscope <- function(data, log10 = FALSE, name = "Cluster Results", group
         countsPerAcctNum = sum(.$Count) / length(unique(.$AccountNumber))
       )),
       panel = map_plot(data, 
-                       ~ figure(., ylab = "Normalized Count") %>%
-                         ly_lines(x = Date, y = Count, group = AccountNumber, alpha = .05, legend = F) %>%
-                         y_axis(log = log10) 
-                         
+                       ~ ggplot(., aes(x = Date, y = Count, group = AccountNumber)) +
+                         geom_line(alpha = .05) +
+                         scale_y_continuous(trans = trans) +
+                         labs(y = "Normalized Count") +
+                         theme_bw()
+                       # ~ figure(., ylab = "Normalized Count") %>%
+                       #   ly_lines(x = Date, y = Count, group = AccountNumber, alpha = .05, legend = F) %>%
+                       #   y_axis(log = log10) 
       )
     ) %>%
     trelliscope(name, group = group, path = path, self_contained = selfContained)
