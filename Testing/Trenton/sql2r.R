@@ -117,6 +117,7 @@ cutPtData <- cutData %>%
 
 
 # trelliscope the cluster results 
+# Make sure to gather before you bring it in
 tic()
 clusterData %>%
    gen_trelliscope(trans = "log10", 
@@ -127,6 +128,19 @@ clusterData %>%
 toc()
 
 
+
+
+# Joseph's version #####
+tic()
+clusterData %>%
+  select(-features) %>%
+  gather("Date", "Count", -AccountNumber, -prediction, -Truth) %>%
+  clutser_trelliscope(trans = "log10", 
+                  name = "Cluster Results 100", 
+                  group = "eClaims", 
+                  path = "~/trelliscopeDisplays", 
+                  selfContained = F)
+toc()
 
 
 

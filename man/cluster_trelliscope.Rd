@@ -23,6 +23,7 @@ cluster_trelliscope(data, trans = "identity", name = "Cluster Results",
 \item{path}{the base directory of trelliscope app -- defaults to "~/trelliscope" --}
 
 \item{selfContained}{create the individual pre-rendered panels -- defaults to FALSE --
+
 Intended to take data in weekly long format for trelliscope use}
 }
 \value{

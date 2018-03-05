@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>cutPoint_trelliscope — cutPoint_trelliscope â€¢ tsCogs</title>
+<title>cutPoint_trelliscope — cutPoint_trelliscope • tsCogs</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -94,7 +94,9 @@
     <p>cutPoint_trelliscope</p>
     
 
-    <pre class="usage"><span class='fu'>cutPoint_trelliscope</span>(<span class='no'>data</span>, <span class='kw'>movAvg</span> <span class='kw'>=</span> <span class='fl'>21</span>)</pre>
+    <pre class="usage"><span class='fu'>cutPoint_trelliscope</span>(<span class='no'>data</span>, <span class='kw'>movAvg</span> <span class='kw'>=</span> <span class='fl'>21</span>, <span class='kw'>trans</span> <span class='kw'>=</span> <span class='st'>"identity"</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cutPoint Results"</span>, <span class='kw'>group</span> <span class='kw'>=</span> <span class='st'>"common"</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"~/trelliscope"</span>,
+  <span class='kw'>selfContained</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
@@ -110,6 +112,26 @@ Intended to take data from long SQL Server table format</p></td>
     <tr>
       <th>movAvg</th>
       <td><p>Moving Average -- Defaults to 21</p></td>
+    </tr>
+    <tr>
+      <th>trans</th>
+      <td><p>scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>name of the trelliscope view -- defaults to "Cluster Results" --</p></td>
+    </tr>
+    <tr>
+      <th>group</th>
+      <td><p>group of trelliscope views -- defaults to "common" --</p></td>
+    </tr>
+    <tr>
+      <th>path</th>
+      <td><p>the base directory of trelliscope app -- defaults to "~/trelliscope" --</p></td>
+    </tr>
+    <tr>
+      <th>selfContained</th>
+      <td><p>create the individual pre-rendered panels -- defaults to FALSE --</p></td>
     </tr>
     </table>
     

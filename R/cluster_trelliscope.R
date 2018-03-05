@@ -10,6 +10,7 @@
 #' @param group group of trelliscope views -- defaults to "common" --
 #' @param path the base directory of trelliscope app -- defaults to "~/trelliscope" --
 #' @param selfContained create the individual pre-rendered panels -- defaults to FALSE --
+#' 
 #' Intended to take data in weekly long format for trelliscope use
 #' @import tidyverse lubridate trelliscopejs ggplot2 rbokeh
 #' 
@@ -17,11 +18,11 @@
 #' @export
 #'
 #' @examples test
-cluster_trelliscope <- function(data, trans = "identity", name = "Cluster Results", group = "common", path = "~/trelliscope", selfContained = F) {
+cluster_trelliscope <- function(data, trans = "identity",
+                                name = "Cluster Results", group = "common", 
+                                path = "~/trelliscope", selfContained = F) {
   
   data %>%
-    select(-features) %>%
-    gather("Date", "Count", -AccountNumber, -prediction) %>%
     mutate(Date = ymd(Date)) %>%
     group_by(prediction) %>%
     nest() %>%
@@ -40,9 +41,6 @@ cluster_trelliscope <- function(data, trans = "identity", name = "Cluster Result
                          scale_y_continuous(trans = trans) +
                          labs(y = "Normalized Count") +
                          theme_bw()
-                       # ~ figure(., ylab = "Normalized Count") %>%
-                       #   ly_lines(x = Date, y = Count, group = AccountNumber, alpha = .05, legend = F) %>%
-                       #   y_axis(log = log10) 
       )
     ) %>%
     trelliscope(name, group = group, path = path, self_contained = selfContained)
