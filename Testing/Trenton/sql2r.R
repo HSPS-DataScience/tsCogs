@@ -110,22 +110,25 @@ truthData <- clusterData %>%
 cutPtData <- cutData %>%
   left_join(truthData)
 
-
+# add the truth to the cluster data
 clusterData %<>% 
   left_join(truthData %>% select(-prediction), by = "AccountNumber")
 
 # trelliscope the cluster results 
 tic()
 clusterData %>%
-  cluster_trelliscope(trans = "log10",
-                      name = "Cluster Results 100 (log10)", 
+  select(-features) %>%
+  gather("Date", "Count", -AccountNumber, -prediction, -Truth) %>%
+  cluster_trelliscope(trans = "log10", 
+                      name = "Cluster Results 100", 
                       group = "eClaims", 
                       path = "~/trelliscopeDisplays", 
                       selfContained = F)
 toc()
 
 
-# trelliscope the cluster results 
+# trelliscope the cut point results 
+# Make sure to gather before you bring it in
 tic()
 cutPtData %>%
   cutPoint_trelliscope(name = "cutPoint Results", 
@@ -138,29 +141,7 @@ toc()
 
 
 
-
-
-
-
-
 ###  stopped here  ###
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 clusterData %>%

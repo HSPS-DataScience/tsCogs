@@ -18,13 +18,9 @@
 #' @export
 #' 
 #' @examples test
-cutPoint_trelliscope <- function(data, 
-                                 movAvg = 21, 
-                                 trans = "identity", 
-                                 name = "cutPoint Results", 
-                                 group = "common", 
-                                 path = "~/trelliscope", 
-                                 selfContained = F) {
+cutPoint_trelliscope <- function(data, movAvg = 21, trans = "identity",
+                                 name = "cutPoint Results", group = "common", 
+                                 path = "~/trelliscope", selfContained = F) {
   
   cutData <- data %>%
     arrange(AccountNumber, Date) %>%

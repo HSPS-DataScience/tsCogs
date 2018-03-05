@@ -15,7 +15,8 @@
 #' @export
 #'
 #' @examples test
-cut_point <- function(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1, dialBack = 0) {
+cut_point <- function(data, movAvg = 21, startQuant = 0.2, 
+                      movAvg_zeroDays = 1, dialBack = 0) {
 
   data %>%
     group_by(AccountNumber) %>%
