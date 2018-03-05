@@ -18,7 +18,6 @@
 #' @export
 #'
 #' @examples test
-
 cluster_trelliscope <- function(data, trans = "identity",
                                 name = "Cluster Results", group = "common", 
                                 path = "~/trelliscope", selfContained = F) {
