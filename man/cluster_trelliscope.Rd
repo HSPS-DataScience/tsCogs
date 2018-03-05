@@ -4,8 +4,9 @@
 \alias{cluster_trelliscope}
 \title{cluster_trelliscope}
 \usage{
-cluster_trelliscope(data, trans = "identity", name = "Cluster Results",
-  group = "common", path = "~/trelliscope", selfContained = F)
+cluster_trelliscope(data, idCols = c("AccountNumber", "prediction", "Truth"),
+  trans = "identity", name = "Cluster Results", group = "common",
+  path = "~/trelliscope", selfContained = F)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
