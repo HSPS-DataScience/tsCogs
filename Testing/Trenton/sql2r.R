@@ -110,21 +110,45 @@ truthData <- clusterData %>%
 cutPtData <- cutData %>%
   left_join(truthData)
 
+
+clusterData %<>% 
+  left_join(truthData %>% select(-prediction), by = "AccountNumber")
+
+# trelliscope the cluster results 
+tic()
+clusterData %>%
+  cluster_trelliscope(trans = "log10",
+                      name = "Cluster Results 100 (log10)", 
+                      group = "eClaims", 
+                      path = "~/trelliscopeDisplays", 
+                      selfContained = F)
+toc()
+
+
+# trelliscope the cluster results 
+tic()
+cutPtData %>%
+  cutPoint_trelliscope(name = "cutPoint Results", 
+                      group = "eClaims", 
+                      path = "~/trelliscopeDisplays", 
+                      selfContained = F)
+toc()
+
+
+
+
+
+
+
+
+
+
 ###  stopped here  ###
 
 
 
 
 
-# trelliscope the cluster results 
-tic()
-clusterData %>%
-   gen_trelliscope(trans = "log10", 
-                   name = "Cluster Results 100", 
-                   group = "eClaims", 
-                   path = "~/trelliscopeDisplays", 
-                   selfContained = F)
-toc()
 
 
 

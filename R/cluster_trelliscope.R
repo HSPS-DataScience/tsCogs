@@ -17,11 +17,17 @@
 #' @export
 #'
 #' @examples test
-cluster_trelliscope <- function(data, trans = "identity", name = "Cluster Results", group = "common", path = "~/trelliscope", selfContained = F) {
+cluster_trelliscope <- function(data, 
+                                idCols = c("AccountNumber", "prediction", "Truth"), 
+                                trans = "identity", 
+                                name = "Cluster Results", 
+                                group = "common", 
+                                path = "~/trelliscope", 
+                                selfContained = F) {
   
   data %>%
     select(-features) %>%
-    gather("Date", "Count", -AccountNumber, -prediction) %>%
+    gather("Date", "Count", -idCols) %>% 
     mutate(Date = ymd(Date)) %>%
     group_by(prediction) %>%
     nest() %>%
