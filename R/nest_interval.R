@@ -58,7 +58,8 @@ nest_interval <- function(data, type, interval) {
 
   allData <- data %>%
     select(AccountNumber, Date, Count) %>%
-    filter(AccountNumber != 0,
+    filter(
+       # AccountNumber != "0",
            Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
                           %--% max(Date))) %>%
     group_by(AccountNumber, tmpColName = cut(Date, 2))

@@ -108,19 +108,21 @@ truthData <- clusterData %>%
   slice(1)
 
 cutPtData <- cutData %>%
-  left_join(truthData)
-
+  left_join(truthData, by = "AccountNumber") %>%
+  group_by(AccountNumber)
+  
 # add the truth to the cluster data
 clusterData %<>% 
   left_join(truthData %>% select(-prediction), by = "AccountNumber")
 
 # trelliscope the cluster results 
+# Make sure to gather before you bring it in
 tic()
 clusterData %>%
   select(-features) %>%
   gather("Date", "Count", -AccountNumber, -prediction, -Truth) %>%
   cluster_trelliscope(trans = "log10", 
-                      name = "Cluster Results 100", 
+                      name = "Cluster Results 100 (log10)", 
                       group = "eClaims", 
                       path = "~/trelliscopeDisplays", 
                       selfContained = F)
@@ -128,7 +130,6 @@ toc()
 
 
 # trelliscope the cut point results 
-# Make sure to gather before you bring it in
 tic()
 cutPtData %>%
   cutPoint_trelliscope(name = "cutPoint Results", 
@@ -137,62 +138,17 @@ cutPtData %>%
                       selfContained = F)
 toc()
 
-
-
-
-
-###  stopped here  ###
-
-
-clusterData %>%
-  filter(prediction == 97) %>%
-  select(-features) %>%
-  gather("Date", "Count", -AccountNumber, -prediction) %>%
-  mutate(Date = ymd(Date)) %>%
-  group_by(prediction) %>%
-  ggplot(aes(x = Date, y = Count, color = AccountNumber)) +
-  geom_line(show.legend = FALSE) +
-  scale_y_continuous(trans = "identity") +
-  facet_wrap(~AccountNumber, scales = "free_y") +
-  theme_bw()
-
-rawData %>%
-  filter(AccountNumber == 83600) %>%
-  cutPoint_trelliscope()
-
-
-cutData <- rawData %>%
-  filter(AccountNumber == 83600) %>%
-  arrange(AccountNumber, Date) %>%
-  cut_point() %>%
-  slice(1)
-
-rawData %>%
-  filter(AccountNumber == 83600) %>%
-  arrange(AccountNumber, Date) %>%
-  group_by(AccountNumber) %>%
-  mutate(M_AVG = movavg(Count, 21, "s")) %>%
-  nest() %>%
-  mutate(startDate = cutData$startDate,
-         zeroDate = cutData$zeroDate,
-         endDate = cutData$endDate,
-         cutDate = cutData$cutDate) %>%
-  unnest() %>%
-  group_by(AccountNumber) %>%
-  nest() %>%
-  mutate(
-    panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
-                       geom_line(aes(y = Count, alpha = 0.5)) +
-                       geom_line(aes(y = M_AVG)) +
-                       geom_vline(aes(xintercept = startDate), color = "blue", linetype = 3) +
-                       geom_vline(aes(xintercept = zeroDate), color = "green") +
-                       geom_vline(aes(xintercept = endDate), color = "red") +
-                       geom_vline(aes(xintercept = cutDate), color = "orange", linetype = 3) +
-                       theme_bw() +
-                       labs(x = "Date", y = "Count")
-    )
-  ) %>%
-  trelliscope("Cut-Point Results", self_contained = F)
-
+bob <- cutPtData %>%
+  filter(AccountNumber %in% c("75815", "15300", "76174", "47509"))
+# cognostic/feature set generation #
+tic()
+cogsData <- bob %>%
+  nest_todo() %>%
+  nest_append_interval(bob, "years", 1) %>%
+  nest_append_interval(cutPtData, "months", 6) %>%
+  nest_append_interval(cutPtData, "months", 3) %>%
+  nest_append_interval(cutPtData, "weeks", 6) %>%
+  nest_append_interval(cutPtData, "days", 14)
+toc()
 
 
