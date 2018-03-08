@@ -58,9 +58,7 @@ nest_interval <- function(data, type, interval) {
 
   allData <- data %>%
     select(AccountNumber, Date, Count) %>%
-    filter(
-       # AccountNumber != "0",
-           Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
+    filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
                           %--% max(Date))) %>%
     group_by(AccountNumber, tmpColName = cut(Date, 2))
 
@@ -113,7 +111,7 @@ nest_interval <- function(data, type, interval) {
 #' 2. "R"
 #' 3. "L"
 #' 
-#' @import tidyverse Hmisc
+#' @import tidyverse Hmisc multidplyr
 #'
 #' @return nested tibble
 #' @export
@@ -125,7 +123,7 @@ nest_core_interval <- function(data, type, interval, divide) {
 
   data %>%
     select(AccountNumber, Date, Count) %>%
-    group_by(AccountNumber) %>%
+    partition(AccountNumber) %>%
     summarise(!!paste0(letter, interval, "_", divide, "_Count") := sum(Count),
               !!paste0(letter, interval, "_", divide, "_Mean") := mean(Count),
               !!paste0(letter, interval, "_", divide, "_Median") := median(Count),
@@ -136,26 +134,27 @@ nest_core_interval <- function(data, type, interval, divide) {
 
               #######################################################################
 
-              !!paste0(letter, interval, "_", divide, "_SLP") := (lm(Count ~ as.numeric(Date),
-                                                                     data = .)[["coefficients"]][2]),
+              #!!paste0(letter, interval, "_", divide, "_SLP") := (lm(Count ~ as.numeric(Date),
+              #                                                       data = .)[["coefficients"]][2]),
               !!paste0(letter, interval, "_", divide, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
               !!paste0(letter, interval, "_", divide, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count))))),
 
               #######################################################################
 
-              !!paste0(letter, interval, "_", divide, "_P") := find_SignedSequence(Count, 1),
-              !!paste0(letter, interval, "_", divide, "_N") := find_SignedSequence(Count, -1),
-              !!paste0(letter, interval, "_", divide, "_Z") := find_SignedSequence(Count, 0),
+              !!paste0(letter, interval, "_", divide, "_P") := tsCogs::find_SignedSequence(Count, 1),
+              !!paste0(letter, interval, "_", divide, "_N") := tsCogs::find_SignedSequence(Count, -1),
+              !!paste0(letter, interval, "_", divide, "_Z") := tsCogs::find_SignedSequence(Count, 0),
 
               #######################################################################
 
-              !!paste0(letter, interval, "_", divide, "_I") := find_LadderSequence(Count, "I"),
-              !!paste0(letter, interval, "_", divide, "_D") := find_LadderSequence(Count, "D"),
-              !!paste0(letter, interval, "_", divide, "_IP") := find_LadderSequence(Count, "IP"),
-              !!paste0(letter, interval, "_", divide, "_DP") := find_LadderSequence(Count, "DP"),
-              !!paste0(letter, interval, "_", divide, "_IN") := find_LadderSequence(Count, "IN"),
-              !!paste0(letter, interval, "_", divide, "_DN") := find_LadderSequence(Count, "DN")
+              !!paste0(letter, interval, "_", divide, "_I") := tsCogs::find_LadderSequence(Count, "I"),
+              !!paste0(letter, interval, "_", divide, "_D") := tsCogs::find_LadderSequence(Count, "D"),
+              !!paste0(letter, interval, "_", divide, "_IP") := tsCogs::find_LadderSequence(Count, "IP"),
+              !!paste0(letter, interval, "_", divide, "_DP") := tsCogs::find_LadderSequence(Count, "DP"),
+              !!paste0(letter, interval, "_", divide, "_IN") := tsCogs::find_LadderSequence(Count, "IN"),
+              !!paste0(letter, interval, "_", divide, "_DN") := tsCogs::find_LadderSequence(Count, "DN")
     ) %>%
+    collect() %>%
     group_by(AccountNumber) %>%
     nest(.key = "Cogs") %>%
     rename(!!paste0(letter, interval, "_", divide, "_Cognostics") := Cogs)

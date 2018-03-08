@@ -55,7 +55,7 @@ nest_todo <- function(data) {
 #' 3. month
 #' 4. year
 #' 
-#' @import tidyverse lubridate 
+#' @import tidyverse lubridate multidplyr
 #' @importFrom Hmisc capitalize
 #'
 #' @return nested tibble
@@ -68,11 +68,10 @@ nest_core <- function(data, type) {
   letter <- capitalize(substr(type, 1, 1))
 
   data %>%
-   # filter(AccountNumber != 0) %>%
     select(AccountNumber, Date, Count) %>%
     group_by(AccountNumber, tmpColName = floor_date(Date, type)) %>%
     summarise(Count = sum(Count)) %>%
-    group_by(AccountNumber) %>%
+    partition(AccountNumber) %>%
     summarise(!!paste0(letter, "_Count") := sum(Count),
               !!paste0(letter, "_Mean") := mean(Count),
               !!paste0(letter, "_Median") := median(Count),
@@ -83,26 +82,27 @@ nest_core <- function(data, type) {
 
               #######################################################################
 
-              !!paste0(letter, "_SLP") := (lm(Count ~ as.numeric(tmpColName),
-                                              data = .)[["coefficients"]][2]),
+              # !!paste0(letter, "_SLP") := (lm(Count ~ as.numeric(tmpColName),
+              #                                 data = .)[["coefficients"]][2]),
               !!paste0(letter, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
               !!paste0(letter, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count))))),
 
               #######################################################################
 
-              !!paste0(letter, "_P") := find_SignedSequence(Count, 1),
-              !!paste0(letter, "_N") := find_SignedSequence(Count, -1),
-              !!paste0(letter, "_Z") := find_SignedSequence(Count, 0),
+              !!paste0(letter, "_P") := tsCogs::find_SignedSequence(Count, 1),
+              !!paste0(letter, "_N") := tsCogs::find_SignedSequence(Count, -1),
+              !!paste0(letter, "_Z") := tsCogs::find_SignedSequence(Count, 0),
 
               #######################################################################
 
-              !!paste0(letter, "_I") := find_LadderSequence(Count, "I"),
-              !!paste0(letter, "_D") := find_LadderSequence(Count, "D"),
-              !!paste0(letter, "_IP") := find_LadderSequence(Count, "IP"),
-              !!paste0(letter, "_DP") := find_LadderSequence(Count, "DP"),
-              !!paste0(letter, "_IN") := find_LadderSequence(Count, "IN"),
-              !!paste0(letter, "_DN") := find_LadderSequence(Count, "DN")
+              !!paste0(letter, "_I") := tsCogs::find_LadderSequence(Count, "I"),
+              !!paste0(letter, "_D") := tsCogs::find_LadderSequence(Count, "D"),
+              !!paste0(letter, "_IP") := tsCogs::find_LadderSequence(Count, "IP"),
+              !!paste0(letter, "_DP") := tsCogs::find_LadderSequence(Count, "DP"),
+              !!paste0(letter, "_IN") := tsCogs::find_LadderSequence(Count, "IN"),
+              !!paste0(letter, "_DN") := tsCogs::find_LadderSequence(Count, "DN")
     ) %>%
+    collect() %>%
     group_by(AccountNumber) %>%
     nest(.key = "Cogs") %>%
     rename(!!paste0(letter, "_Cognostics") := Cogs)
