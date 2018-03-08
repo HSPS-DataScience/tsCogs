@@ -221,7 +221,14 @@ saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 
 ### Cut-Point Algorithm
 
-```{r cutpt, eval = F}
+The cut-point algorithm is an internally designed process of removing both the startup curve and the drop curve as well as any outliers (in time not count) from the time-series profile for each AccountNumber. The intention was to minimize the effect of such ramp-up, slow-down, and outliers on the cognostic/feature set generation step. Thus avoiding cognostics/features created from misleading and sometimes obvious data (in the case of the slow-down).
+
+```{r cutptFunction, eval = F}
+
+```
+
+After some data setup
+```{r cutptApplication, eval = F}
 # make minor initial adjustments
 tic()
 rawData <- d %>%

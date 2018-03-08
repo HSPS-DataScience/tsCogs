@@ -68,7 +68,7 @@ nest_core <- function(data, type) {
   letter <- capitalize(substr(type, 1, 1))
 
   data %>%
-    filter(AccountNumber != 0) %>%
+   # filter(AccountNumber != 0) %>%
     select(AccountNumber, Date, Count) %>%
     group_by(AccountNumber, tmpColName = floor_date(Date, type)) %>%
     summarise(Count = sum(Count)) %>%

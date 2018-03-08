@@ -122,14 +122,17 @@ clusterData %>%
   cluster_trelliscope(trans = "log10", 
                       name = "Cluster Results 100 (log10)", 
                       group = "eClaims", 
-                      path = "~/trelliscopeDisplaysTest", 
+                      path = "~/trelliscopeDisplays", 
                       selfContained = F)
 toc()
 
 
 # trelliscope the cut point results 
+### this won't work with cutData as input - need to fix  ###
 tic()
-cutPtData %>%
+cutData %>%
+  left_join(truthData, by = "AccountNumber") %>%
+  group_by(AccountNumber) %>%
   cutPoint_trelliscope(name = "cutPoint Results", 
                       group = "eClaims", 
                       path = "~/trelliscopeDisplays", 
@@ -137,19 +140,145 @@ cutPtData %>%
 toc()
 
 
-bob <- cutData %>%
-  filter(AccountNumber %in% c("75815", "15300", "76174", "47509"))
-# cognostic/feature set generation #
+# bob <- cutData %>%
+#   filter(AccountNumber %in% c("0", "75815", "15300", "76174", "47509"))
+# cognostic/feature set generation # see limited functions below
 tic()
 cogsData <- cutData %>%
+  select(AccountNumber, Date, Count) %>%
   nest_todo() %>%
-  nest_append_interval(cutData, "years", 1) %>%
+  # nest_append_interval(cutData, "years", 1) %>%
   nest_append_interval(cutData, "months", 6) %>%
-  nest_append_interval(cutData, "months", 3) %>%
+  # nest_append_interval(cutData, "months", 3) %>%
   nest_append_interval(cutData, "weeks", 6) %>%
-  nest_append_interval(cutData, "days", 14) %>%
+  # nest_append_interval(cutData, "days", 14) %>%
   left_join(truthData, by = "AccountNumber") %>%
   group_by(AccountNumber)
 toc()
 
+cogsData %>% ungroup() %>% unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics) %>%
+  unnest(M6_A_Cognostics, M6_L_Cognostics) %>%
+  unnest(M6_R_Cognostics) %>%
+  unnest(M6_Ratios) %>%
+  unnest(W6_A_Cognostics, W6_L_Cognostics) %>%
+  unnest(W6_R_Cognostics) %>%
+  unnest(W6_Ratios)
 
+
+
+# TESTING #
+# create subset of 500 accounts #
+# bob <- cutData %>% 
+#   filter(AccountNumber %in% sample(keepIDs, 1000))
+# # time various combos #
+# tic()
+# bob %>%
+#   select(AccountNumber, Date, Count) %>%
+#   nest_todo() %>%
+# #  nest_append_interval(bob, "days", 14) %>%
+#   nest_append_interval(bob, "weeks", 6) %>%
+#   nest_append_interval(bob, "months", 6) #%>% 
+# toc()
+
+
+
+nest_todo <- function(data) {
+  
+  day <- nest_core(data, "day")
+  week <- nest_core(data, "week")
+  month <- nest_core(data, "month")
+  year <- nest_core(data, "year")
+  
+  day %>%
+    left_join(., week, by = "AccountNumber") %>%
+    left_join(., month, by = "AccountNumber") %>%
+    left_join(., year, by = "AccountNumber")
+}
+
+nest_core <- function(data, type) {
+  
+  tmpColName <- capitalize(type)
+  letter <- capitalize(substr(type, 1, 1))
+  
+  data %>%
+    # filter(AccountNumber != 0) %>%
+    select(AccountNumber, Date, Count) %>%
+    group_by(AccountNumber, tmpColName = floor_date(Date, type)) %>%
+    summarise(Count = sum(Count)) %>%
+    group_by(AccountNumber) %>%
+    summarise(!!paste0(letter, "_Count") := sum(Count),
+              !!paste0(letter, "_Mean") := mean(Count),
+              !!paste0(letter, "_Median") := median(Count),
+              !!paste0(letter, "_SD") := sd(Count),
+              !!paste0(letter, "_Max") := max(Count),
+              !!paste0(letter, "_Min") := min(Count),
+              !!paste0(letter, "_CV") := (sd(Count) / mean(Count)),
+              
+              #######################################################################
+              
+              !!paste0(letter, "_SLP") := (lm(Count ~ as.numeric(tmpColName),
+                                              data = .)[["coefficients"]][2]),
+              !!paste0(letter, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
+              !!paste0(letter, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count)))))#,
+              
+              #######################################################################
+              
+              # !!paste0(letter, "_P") := find_SignedSequence(Count, 1),
+              # !!paste0(letter, "_N") := find_SignedSequence(Count, -1),
+              # !!paste0(letter, "_Z") := find_SignedSequence(Count, 0),
+              # 
+              # #######################################################################
+              # 
+              # !!paste0(letter, "_I") := find_LadderSequence(Count, "I"),
+              # !!paste0(letter, "_D") := find_LadderSequence(Count, "D"),
+              # !!paste0(letter, "_IP") := find_LadderSequence(Count, "IP"),
+              # !!paste0(letter, "_DP") := find_LadderSequence(Count, "DP"),
+              # !!paste0(letter, "_IN") := find_LadderSequence(Count, "IN"),
+              # !!paste0(letter, "_DN") := find_LadderSequence(Count, "DN")
+    ) %>%
+    group_by(AccountNumber) %>%
+    nest(.key = "Cogs") %>%
+    rename(!!paste0(letter, "_Cognostics") := Cogs)
+}
+
+nest_core_interval <- function(data, type, interval, divide) {
+  
+  letter <- capitalize(substr(type, 1, 1))
+  
+  data %>%
+    select(AccountNumber, Date, Count) %>%
+    group_by(AccountNumber) %>%
+    summarise(!!paste0(letter, interval, "_", divide, "_Count") := sum(Count),
+              !!paste0(letter, interval, "_", divide, "_Mean") := mean(Count),
+              !!paste0(letter, interval, "_", divide, "_Median") := median(Count),
+              !!paste0(letter, interval, "_", divide, "_SD") := sd(Count),
+              !!paste0(letter, interval, "_", divide, "_Max") := max(Count),
+              !!paste0(letter, interval, "_", divide, "_Min") := min(Count),
+              !!paste0(letter, interval, "_", divide, "_CV") := (sd(Count) / mean(Count)),
+              
+              #######################################################################
+              
+              !!paste0(letter, interval, "_", divide, "_SLP") := (lm(Count ~ as.numeric(Date),
+                                                                     data = .)[["coefficients"]][2]),
+              !!paste0(letter, interval, "_", divide, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
+              !!paste0(letter, interval, "_", divide, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count)))))#,
+              
+              #######################################################################
+              
+              # !!paste0(letter, interval, "_", divide, "_P") := find_SignedSequence(Count, 1),
+              # !!paste0(letter, interval, "_", divide, "_N") := find_SignedSequence(Count, -1),
+              # !!paste0(letter, interval, "_", divide, "_Z") := find_SignedSequence(Count, 0),
+              # 
+              # #######################################################################
+              # 
+              # !!paste0(letter, interval, "_", divide, "_I") := find_LadderSequence(Count, "I"),
+              # !!paste0(letter, interval, "_", divide, "_D") := find_LadderSequence(Count, "D"),
+              # !!paste0(letter, interval, "_", divide, "_IP") := find_LadderSequence(Count, "IP"),
+              # !!paste0(letter, interval, "_", divide, "_DP") := find_LadderSequence(Count, "DP"),
+              # !!paste0(letter, interval, "_", divide, "_IN") := find_LadderSequence(Count, "IN"),
+              # !!paste0(letter, interval, "_", divide, "_DN") := find_LadderSequence(Count, "DN")
+    ) %>%
+    group_by(AccountNumber) %>%
+    nest(.key = "Cogs") %>%
+    rename(!!paste0(letter, interval, "_", divide, "_Cognostics") := Cogs)
+}
