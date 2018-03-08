@@ -12,20 +12,20 @@ library(RODBC) # read SQL tables
 
 tic()
 ###  Read in Daily Profiles of eClaims submissions created in SQL table by Trenton  ###
-# sqlFilename <- 'dbo.eClaimDailyProfilesExpanded' 
+# sqlFilename <- 'dbo.eClaimDailyProfilesExpanded'
 # cn <- odbcDriverConnect("Driver={SQL Server Native Client 11.0};Server=hspsdata.nt.local;Database=SupportReports;Uid=USHSI/trenton.pulsipher;Pwd=22AngelA;trusted_connection=yes;",
 #                        believeNRows = F)
 # d <- sqlFetch(cn, sqlFilename) # 4 mins, ~625 Mb sized object, ~40.8M rows for old data
 # toc()
 # 
 # saveRDS(d, file = "~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
-load("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
+d <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 
-# make minor initial adjustments
+# make minor initial adjustments (3 mins)
 tic()
 rawData <- d %>%
+  as.tbl() %>%
   mutate(AccountNumber = as.character(AccountNumber)) %>%
-  as.tibble() %>%
   rename(Date = ymd) %>%
   group_by(AccountNumber) %>%
   filter(!is.na(AccountNumber),
@@ -53,7 +53,8 @@ toc()
 
 # grab only AccountNumber after applying the rules
 keepIDs <- cutData %>%
-  pull(AccountNumber)
+  pull(AccountNumber) %>%
+  unique()
 
 # determine cluster size (elbow plot) #
 # run once 
@@ -107,10 +108,7 @@ truthData <- clusterData %>%
   group_by(AccountNumber) %>%
   slice(1)
 
-cutPtData <- cutData %>%
-  left_join(truthData, by = "AccountNumber") %>%
-  group_by(AccountNumber)
-  
+
 # add the truth to the cluster data
 clusterData %<>% 
   left_join(truthData %>% select(-prediction), by = "AccountNumber")
@@ -120,11 +118,11 @@ clusterData %<>%
 tic()
 clusterData %>%
   select(-features) %>%
-  gather("Date", "Count", -AccountNumber, -prediction, -Truth) %>%
+  gather("Date", "Count", -AccountNumber, -prediction) %>% #, -Truth) %>%
   cluster_trelliscope(trans = "log10", 
                       name = "Cluster Results 100 (log10)", 
                       group = "eClaims", 
-                      path = "~/trelliscopeDisplays", 
+                      path = "~/trelliscopeDisplaysTest", 
                       selfContained = F)
 toc()
 
@@ -138,17 +136,20 @@ cutPtData %>%
                       selfContained = F)
 toc()
 
-bob <- cutPtData %>%
+
+bob <- cutData %>%
   filter(AccountNumber %in% c("75815", "15300", "76174", "47509"))
 # cognostic/feature set generation #
 tic()
-cogsData <- bob %>%
+cogsData <- cutData %>%
   nest_todo() %>%
-  nest_append_interval(bob, "years", 1) %>%
-  nest_append_interval(cutPtData, "months", 6) %>%
-  nest_append_interval(cutPtData, "months", 3) %>%
-  nest_append_interval(cutPtData, "weeks", 6) %>%
-  nest_append_interval(cutPtData, "days", 14)
+  nest_append_interval(cutData, "years", 1) %>%
+  nest_append_interval(cutData, "months", 6) %>%
+  nest_append_interval(cutData, "months", 3) %>%
+  nest_append_interval(cutData, "weeks", 6) %>%
+  nest_append_interval(cutData, "days", 14) %>%
+  left_join(truthData, by = "AccountNumber") %>%
+  group_by(AccountNumber)
 toc()
 
 

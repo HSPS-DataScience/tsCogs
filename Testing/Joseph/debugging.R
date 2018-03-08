@@ -4,6 +4,7 @@ library(tsCogs)
 tic()
 bob <- rawData %>%
   #filter(AccountNumber %in% c("75815", "15300")) %>%
+#  filter(AccountNumber %in% c("75815", "15300")) %>%
   as.tbl() %>%
   mutate(AccountNumber = as.character(AccountNumber)) %>%
   rename(Date = ymd) %>%
@@ -133,3 +134,8 @@ nest_core_test <- function(data, type) {
     nest(.key = "Cogs") %>%
     rename(!!paste0(letter, "_Cognostics") := Cogs)
 }
+=======
+  left_join(truthData, by = "AccountNumber") %>%
+  group_by(AccountNumber)
+  
+>>>>>>> c3d5b1a5fd1778a826b596178892a42ea250c19b
