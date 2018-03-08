@@ -18,7 +18,8 @@ Depends: tidyverse,
     pracma,
     trelliscopejs,
     magrittr,
-    sparklyr
+    sparklyr,
+    multidplyr
 Imports: tidyverse,
     lubridate,
     Hmisc,
