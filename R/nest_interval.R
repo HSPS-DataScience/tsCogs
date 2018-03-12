@@ -69,7 +69,7 @@ nest_interval <- function(data, type, interval) {
 
   leftData <- allData %>%
     ungroup() %>%
-    filter(Date < ((max(Date) - do.call(get(derefType), list(interval)))) - 1) %>%
+    filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
     nest_core_interval(type, interval, "L")
 
   ratioData <- left_join(leftData, rightData, by = "AccountNumber")
