@@ -92,15 +92,21 @@ joe <- cutData %>%
 
 trent <- joe %>%
   nest_todo() %>%
-  nest_append_interval_test(joe, "years", 1) #%>%
-  # nest_append_interval_test(joe, "months", 6) %>%
-  # nest_append_interval_test(joe, "months", 3) %>%
-  # nest_append_interval_test(joe, "weeks", 6) %>%
-  #nest_append_interval_test(joe, "days", 14)
+  nest_append_interval_test(joe, "years", 1) %>%
+  nest_append_interval_test(joe, "months", 6) %>%
+  nest_append_interval_test(joe, "months", 3) %>%
+  nest_append_interval_test(joe, "weeks", 6) %>%
+  nest_append_interval_test(joe, "days", 14)
 
 trent %>%
-  arrange(AccountNumber) %>%
-  select(AccountNumber, contains("L_Cognostics"))
+  arrange(AccountNumber) #%>%
+  select(AccountNumber, contains("R_Cognostics"))
+  
+joe %>%
+  ggplot(aes(x = Date, y = Count, color = factor(AccountNumber))) +
+  geom_point() +
+  geom_smooth() +
+  theme_bw()
 
 trent %>%
   unnest()
@@ -119,10 +125,10 @@ nest_append_interval_test <- function(nestTib, rawData, type, interval) {
   #   group_by(AccountNumber)
   
   organizedData <- rawData %>%
-    partition(AccountNumber) %>%
-    nest_interval_test(type, interval) %>%
-    collect() %>%
-    group_by(AccountNumber)
+    #partition(AccountNumber) %>%
+    nest_interval_test(type, interval) #%>%
+    #collect() %>%
+    #group_by(AccountNumber)
   #organizedData <- nest_interval_test(rawData, type, interval)
   
   nestTib %>%
@@ -138,19 +144,19 @@ nest_interval_test <- function(data, type, interval) {
   letter <- capitalize(substr(type, 1, 1))
   
   allData <- data %>%
-    select(AccountNumber, Date, Count) #%>%
-    #group_by(AccountNumber) %>%
-    #filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
-    #                      %--% max(Date)))
+    select(AccountNumber, Date, Count) %>%
+    group_by(AccountNumber) %>%
+    filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
+                          %--% max(Date)))
   
   rightData <- allData %>%
-    # ungroup() %>%
-    #filter(Date >= (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
+    #ungroup() %>%
+    filter(Date >= (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
     nest_core_interval_test(type, interval, "R")
 
   leftData <- allData %>%
     # ungroup() %>%
-    #filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
+    filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
     nest_core_interval_test(type, interval, "L")
 
   ratioData <- left_join(leftData, rightData, by = "AccountNumber")
@@ -179,6 +185,8 @@ nest_core_interval_test <- function(data, type, interval, divide) {
   
   data %>%
     select(AccountNumber, Date, Count) %>%
+    ungroup() %>%
+    partition(AccountNumber) %>%
     summarise(!!paste0(letter, interval, "_", divide, "_Count") := sum(Count),
               !!paste0(letter, interval, "_", divide, "_Mean") := mean(Count),
               !!paste0(letter, interval, "_", divide, "_Median") := median(Count),
@@ -209,6 +217,7 @@ nest_core_interval_test <- function(data, type, interval, divide) {
               !!paste0(letter, interval, "_", divide, "_IN") := tsCogs::find_LadderSequence(Count, "IN"),
               !!paste0(letter, interval, "_", divide, "_DN") := tsCogs::find_LadderSequence(Count, "DN")
     ) %>%
+    collect() %>%
     group_by(AccountNumber) %>%
     nest(.key = "Cogs") %>%
     rename(!!paste0(letter, interval, "_", divide, "_Cognostics") := Cogs)
