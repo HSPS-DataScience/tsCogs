@@ -127,7 +127,7 @@ clusterData %<>%
 toc()
 
 
-# cognostic/feature set generation # see limited functions below
+# cognostic/feature set generation (24 min)
 cogsData <- cutData %>%
   nest_todo() %>%
   nest_append_interval(cutData, "years", 1) %>%
@@ -137,99 +137,17 @@ cogsData <- cutData %>%
   nest_append_interval(cutData, "days", 14) %>%
   left_join(truthData, by = "AccountNumber")
 toc()
-
-
-
-
-
-## Testing ###
-trent <- cutData %>%
-  filter(AccountNumber == c("000205", "000045"))
-
-matt <- trent %>%
-  nest_todo() %>%
-  nest_append_interval(trent, "years", 1) %>%
-  nest_append_interval(trent, "months", 6)
-
-joe <- trent %>% 
-  nest_todo() %>%
-  nest_append_interval(trent, "years", 1) %>%
-  nest_append_interval(trent, "months", 6) %>%
-  nest_append_interval(trent, "months", 3) %>%
-  nest_append_interval(trent, "weeks", 6) %>%
-  nest_append_interval(trent, "days", 14)
-
-unlist(lapply(cogsData, function(X) sum(is.null(X))))
-
-table(is.null(cogsData))
-
-nest_append_interval_test <- function(nestTib, rawData, type, interval) {
-  
-  organizedData <- nest_interval_test(rawData, type, interval)
-  
-  nestTib %>%
-    left_join(organizedData, by = "AccountNumber")
-}
-
-nest_interval_test <- function(data, type, interval) {
-  
-  derefType <- "type"
-  
-  typeCapital <- capitalize(type)
-  letter <- capitalize(substr(type, 1, 1))
-  
-  allData <- data %>%
-    select(AccountNumber, Date, Count) %>%
-    filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
-                          %--% max(Date))) %>%
-    group_by(AccountNumber, tmpColName = cut(Date, 2))
-  
-  rightData <- allData %>%
-    ungroup() %>%
-    filter(Date >= ((max(Date) - do.call(get(derefType), list(interval)))) - 1) %>%
-    nest_core_interval(type, interval, "R")
-  
-  leftData <- allData %>%
-    ungroup() %>%
-    filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
-    nest_core_interval(type, interval, "L")
-
-  ratioData <- left_join(leftData, rightData, by = "AccountNumber")
-
-  ratioData %<>%
-    mutate(
-      !!paste0(letter, interval, "_Ratios"):= map2(ratioData[[2]],
-                                                   ratioData[[3]],
-                                                   ~ as_tibble(.y/.x) %>%
-                                                     rename_all(funs(sub('_.', "_Ratio", .))))) %>%
-    select(AccountNumber, contains("Ratio"))
-
-  allData %<>%
-    ungroup() %>%
-    nest_core_interval(type, interval, "A")
-
-  left_join(allData, leftData, by = "AccountNumber") %>%
-    left_join(., rightData, by = "AccountNumber") %>%
-    left_join(., ratioData, by = "AccountNumber") %>%
-    group_by(AccountNumber)
-}
-#################
-
-
-
-
-
-
-
-
-
-# load("~/Documents/eClaimEnv-wClaimsCogs20180308.rdata")
+# load("~/eClaimEnv-wClaimsCogs20180308.rdata")
 
 cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
 
 # split train/validation datasets #
 library(caret)
 library(R.utils)
+
+cogsData %>%
+  group_by(AccountNumber) %>%
+  
 
 bob <- cogsData %>%
   ungroup() %>%
@@ -264,6 +182,11 @@ methods2 = c("adaboost", "AdaBoost.M1", "AdaBag", #"ada",
              "LogitBoost", "rpartScore",
              "rpartCost", "deepboost", "stepLDA", "naive_bayes", "nb", "stepQDA",
              "rFerns", "rocc", "rpart", "rpart1SE", "rpart2")
+methods2fast = c("LogitBoost", "rpartScore",
+             "rpartCost", "stepLDA", "naive_bayes", "nb", "stepQDA",
+             "rocc", "rpart", "rpart1SE", "rpart2")
+
+
 # packages included: fastAdaBoost, adabag, ada, caTools, rpart, deepboost, klaR, MASS, naivebayes, rFerns, rocc, rpartScore
 
 tic()
@@ -271,7 +194,7 @@ tic()
 set.seed(1234)
 out2 <- list()
 m <- 1
-for(i in methods2) {
+for(i in methods2fast) {
   fit <- tryCatch( train(Truth ~.,
                         data = trainData, #%>% select(-AccountNumber, -prediction),
                         method = i,
