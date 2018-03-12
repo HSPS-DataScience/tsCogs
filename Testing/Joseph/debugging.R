@@ -90,7 +90,7 @@ joe <- cutData %>%
   #filter(AccountNumber %in% c("000040"))
   filter(AccountNumber %in% c("000019", "000040"))
 
-trent <- joe %>%
+trent <- cutData %>%
   nest_todo() %>%
   nest_append_interval(joe, "years", 1) %>%
   nest_append_interval(joe, "months", 6) %>%
