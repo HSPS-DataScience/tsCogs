@@ -1,13 +1,6 @@
 
 library(tsCogs)
 library(RODBC) # read SQL tables
-# library(cluster)
-# library(sparklyr)
-# library(tictoc)
-# library(Hmisc)
-# library(pracma)
-# library(trelliscopejs)
-# library(magrittr)
 
 
 tic()
@@ -22,7 +15,6 @@ tic()
 d <- readRDS("~/R/R_prjs/tsCogs/R_Data/rawDailyProfilesAll.rds")
 
 # make minor initial adjustments (3 mins)
-tic()
 rawData <- d %>%
   as.tbl() %>%
   mutate(AccountNumber = as.character(AccountNumber)) %>%
@@ -35,20 +27,20 @@ rawData <- d %>%
 toc()
 
 # run cutPoint algorithm (5 mins)
-tic()
 cutData <- rawData %>% 
   cut_point()
 toc()
 
 
 # apply rules: >600 claims total and >90 days of claims (14 sec) (removed roughly 5,500 accounts)
-tic()
 cutData %<>%
   group_by(AccountNumber) %>%
   mutate(totalCount = sum(Count),
          numDays = n()) %>%
   filter(totalCount >= 600,
-         numDays >= 90)
+         numDays >= 90) %>%
+  select(-tmp_reverseSign, -tmp_cumSum)
+
 toc()
 
 # grab only AccountNumber after applying the rules
@@ -58,11 +50,7 @@ keepIDs <- cutData %>%
 
 # determine cluster size (elbow plot) #
 # run once 
-# config <- spark_config()
-# config$`sparklyr.shell.driver-memory` <- "1G"
-# config$`sparklyr.shell.executor-memory` <- "1G"
-# config$`spark.yarn.executor.memoryOverhead` <- "512"
-# sc <- spark_connect(master = "local", config = config)
+# sc <- spark_connect(master = "local")
 # normalData_tbl <- copy_to(sc, 
 #                     rawData %>%
 #                       ungroup() %>%
@@ -88,7 +76,6 @@ keepIDs <- cutData %>%
 
 
 # normalize (shape) data as weekly profiles and cluster using kmeans (2 mins)
-tic()
 clusterData <- rawData %>%
   ungroup() %>%
   filter(AccountNumber %in% keepIDs) %>%
@@ -115,170 +102,213 @@ clusterData %<>%
 
 # trelliscope the cluster results 
 # Make sure to gather before you bring it in
-tic()
-clusterData %>%
-  select(-features) %>%
-  gather("Date", "Count", -AccountNumber, -prediction) %>% #, -Truth) %>%
-  cluster_trelliscope(trans = "log10", 
-                      name = "Cluster Results 100 (log10)", 
-                      group = "eClaims", 
-                      path = "~/trelliscopeDisplays", 
-                      selfContained = F)
-toc()
-
-
-# trelliscope the cut point results 
-### this won't work with cutData as input - need to fix  ###
-tic()
-cutData %>%
-  left_join(truthData, by = "AccountNumber") %>%
-  group_by(AccountNumber) %>%
-  cutPoint_trelliscope(name = "cutPoint Results", 
-                      group = "eClaims", 
-                      path = "~/trelliscopeDisplays", 
-                      selfContained = F)
-toc()
-
-
-# bob <- cutData %>%
-#   filter(AccountNumber %in% c("0", "75815", "15300", "76174", "47509"))
-# cognostic/feature set generation # see limited functions below
-tic()
-cogsData <- cutData %>%
-  select(AccountNumber, Date, Count) %>%
-  nest_todo() %>%
-  # nest_append_interval(cutData, "years", 1) %>%
-  nest_append_interval(cutData, "months", 6) %>%
-  # nest_append_interval(cutData, "months", 3) %>%
-  nest_append_interval(cutData, "weeks", 6) %>%
-  # nest_append_interval(cutData, "days", 14) %>%
-  left_join(truthData, by = "AccountNumber") %>%
-  group_by(AccountNumber)
-toc()
-
-cogsData %>% ungroup() %>% unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics) %>%
-  unnest(M6_A_Cognostics, M6_L_Cognostics) %>%
-  unnest(M6_R_Cognostics) %>%
-  unnest(M6_Ratios) %>%
-  unnest(W6_A_Cognostics, W6_L_Cognostics) %>%
-  unnest(W6_R_Cognostics) %>%
-  unnest(W6_Ratios)
-
-
-
-# TESTING #
-# create subset of 500 accounts #
-# bob <- cutData %>% 
-#   filter(AccountNumber %in% sample(keepIDs, 1000))
-# # time various combos #
 # tic()
-# bob %>%
-#   select(AccountNumber, Date, Count) %>%
-#   nest_todo() %>%
-# #  nest_append_interval(bob, "days", 14) %>%
-#   nest_append_interval(bob, "weeks", 6) %>%
-#   nest_append_interval(bob, "months", 6) #%>% 
+# clusterData %>%
+#   select(-features) %>%
+#   gather("Date", "Count", -AccountNumber, -prediction) %>% #, -Truth) %>%
+#   cluster_trelliscope(trans = "log10", 
+#                       name = "Cluster Results 100 (log10)", 
+#                       group = "eClaims", 
+#                       path = "~/trelliscopeDisplays", 
+#                       selfContained = F)
 # toc()
+# 
+# 
+# # trelliscope the cut point results 
+# ### this won't work with cutData as input - need to fix  ###
+# tic()
+# cutData %>%
+#   left_join(truthData, by = "AccountNumber") %>%
+#   group_by(AccountNumber) %>%
+#   cutPoint_trelliscope(name = "cutPoint Results", 
+#                       group = "eClaims", 
+#                       path = "~/trelliscopeDisplays", 
+#                       selfContained = F)
+toc()
+
+
+# cognostic/feature set generation # see limited functions below
+cogsData <- cutData %>%
+  nest_todo() %>%
+  nest_append_interval(cutData, "years", 1) %>%
+  nest_append_interval(cutData, "months", 6) %>%
+  nest_append_interval(cutData, "months", 3) %>%
+  nest_append_interval(cutData, "weeks", 6) %>%
+  nest_append_interval(cutData, "days", 14) %>%
+  left_join(truthData, by = "AccountNumber")
+toc()
 
 
 
-nest_todo <- function(data) {
+
+
+## Testing ###
+trent <- cutData %>%
+  filter(AccountNumber == c("000205", "000045"))
+
+matt <- trent %>%
+  nest_todo() %>%
+  nest_append_interval(trent, "years", 1) %>%
+  nest_append_interval(trent, "months", 6)
+
+joe <- trent %>% 
+  nest_todo() %>%
+  nest_append_interval(trent, "years", 1) %>%
+  nest_append_interval(trent, "months", 6) %>%
+  nest_append_interval(trent, "months", 3) %>%
+  nest_append_interval(trent, "weeks", 6) %>%
+  nest_append_interval(trent, "days", 14)
+
+unlist(lapply(cogsData, function(X) sum(is.null(X))))
+
+table(is.null(cogsData))
+
+nest_append_interval_test <- function(nestTib, rawData, type, interval) {
   
-  day <- nest_core(data, "day")
-  week <- nest_core(data, "week")
-  month <- nest_core(data, "month")
-  year <- nest_core(data, "year")
+  organizedData <- nest_interval_test(rawData, type, interval)
   
-  day %>%
-    left_join(., week, by = "AccountNumber") %>%
-    left_join(., month, by = "AccountNumber") %>%
-    left_join(., year, by = "AccountNumber")
+  nestTib %>%
+    left_join(organizedData, by = "AccountNumber")
 }
 
-nest_core <- function(data, type) {
+nest_interval_test <- function(data, type, interval) {
   
-  tmpColName <- capitalize(type)
+  derefType <- "type"
+  
+  typeCapital <- capitalize(type)
   letter <- capitalize(substr(type, 1, 1))
   
-  data %>%
-    # filter(AccountNumber != 0) %>%
+  allData <- data %>%
     select(AccountNumber, Date, Count) %>%
-    group_by(AccountNumber, tmpColName = floor_date(Date, type)) %>%
-    summarise(Count = sum(Count)) %>%
-    group_by(AccountNumber) %>%
-    summarise(!!paste0(letter, "_Count") := sum(Count),
-              !!paste0(letter, "_Mean") := mean(Count),
-              !!paste0(letter, "_Median") := median(Count),
-              !!paste0(letter, "_SD") := sd(Count),
-              !!paste0(letter, "_Max") := max(Count),
-              !!paste0(letter, "_Min") := min(Count),
-              !!paste0(letter, "_CV") := (sd(Count) / mean(Count)),
-              
-              #######################################################################
-              
-              !!paste0(letter, "_SLP") := (lm(Count ~ as.numeric(tmpColName),
-                                              data = .)[["coefficients"]][2]),
-              !!paste0(letter, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
-              !!paste0(letter, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count)))))#,
-              
-              #######################################################################
-              
-              # !!paste0(letter, "_P") := find_SignedSequence(Count, 1),
-              # !!paste0(letter, "_N") := find_SignedSequence(Count, -1),
-              # !!paste0(letter, "_Z") := find_SignedSequence(Count, 0),
-              # 
-              # #######################################################################
-              # 
-              # !!paste0(letter, "_I") := find_LadderSequence(Count, "I"),
-              # !!paste0(letter, "_D") := find_LadderSequence(Count, "D"),
-              # !!paste0(letter, "_IP") := find_LadderSequence(Count, "IP"),
-              # !!paste0(letter, "_DP") := find_LadderSequence(Count, "DP"),
-              # !!paste0(letter, "_IN") := find_LadderSequence(Count, "IN"),
-              # !!paste0(letter, "_DN") := find_LadderSequence(Count, "DN")
-    ) %>%
-    group_by(AccountNumber) %>%
-    nest(.key = "Cogs") %>%
-    rename(!!paste0(letter, "_Cognostics") := Cogs)
+    filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
+                          %--% max(Date))) %>%
+    group_by(AccountNumber, tmpColName = cut(Date, 2))
+  
+  rightData <- allData %>%
+    ungroup() %>%
+    filter(Date >= ((max(Date) - do.call(get(derefType), list(interval)))) - 1) %>%
+    nest_core_interval(type, interval, "R")
+  
+  leftData <- allData %>%
+    ungroup() %>%
+    filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
+    nest_core_interval(type, interval, "L")
+
+  ratioData <- left_join(leftData, rightData, by = "AccountNumber")
+
+  ratioData %<>%
+    mutate(
+      !!paste0(letter, interval, "_Ratios"):= map2(ratioData[[2]],
+                                                   ratioData[[3]],
+                                                   ~ as_tibble(.y/.x) %>%
+                                                     rename_all(funs(sub('_.', "_Ratio", .))))) %>%
+    select(AccountNumber, contains("Ratio"))
+
+  allData %<>%
+    ungroup() %>%
+    nest_core_interval(type, interval, "A")
+
+  left_join(allData, leftData, by = "AccountNumber") %>%
+    left_join(., rightData, by = "AccountNumber") %>%
+    left_join(., ratioData, by = "AccountNumber") %>%
+    group_by(AccountNumber)
+}
+#################
+
+
+
+
+
+
+
+
+
+# load("~/Documents/eClaimEnv-wClaimsCogs20180308.rdata")
+
+cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
+
+# split train/validation datasets #
+library(caret)
+library(R.utils)
+
+bob <- cogsData %>%
+  ungroup() %>%
+  select(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics, Truth) %>%
+  unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics)
+
+# which colnames are all NAs
+unlist(lapply(bob, function(X) all(is.na(X))))
+
+
+bob %<>% 
+  select(-D_N, -D_IN, -D_DN, -W_N, -W_IN, -W_DN, -M_N, -M_IN, -M_DN, -Y_N, -Y_IN, -Y_DN)
+
+bob[is.na(bob)] <- 0
+
+validationIndex = createDataPartition(bob$Truth, p = 0.8, list = F) # 80% train 20% validation
+validData = bob[-validationIndex,]
+trainData = bob[validationIndex,]
+
+# validationIndex = createDataPartition(cogsData$Truth, p = 0.8, list = F) # 80% train 20% validation
+# validData = cogsData[-validationIndex,]
+# trainData = cogsData[validationIndex,]
+ 
+# can't run it in parallel on a Windows machine
+cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
+control = trainControl(method = "repeatedcv", number = 2, repeats = 2, allowParallel = T) # 4 fold cross-validation repeated 10 times
+metric = "Kappa" #"Accuracy" usually, but here there is a low percentage of "At Risk" accounts so use Kappa
+
+
+# these methods worked (others above did not) #
+methods2 = c("adaboost", "AdaBoost.M1", "AdaBag", #"ada", 
+             "LogitBoost", "rpartScore",
+             "rpartCost", "deepboost", "stepLDA", "naive_bayes", "nb", "stepQDA",
+             "rFerns", "rocc", "rpart", "rpart1SE", "rpart2")
+# packages included: fastAdaBoost, adabag, ada, caTools, rpart, deepboost, klaR, MASS, naivebayes, rFerns, rocc, rpartScore
+
+tic()
+# build multiple models #
+set.seed(1234)
+out2 <- list()
+m <- 1
+for(i in methods2) {
+  fit <- tryCatch( train(Truth ~.,
+                        data = trainData, #%>% select(-AccountNumber, -prediction),
+                        method = i,
+                        trControl = control,
+                        metric = metric),
+                  error = function(e) "bad run" )
+  if(fit != "bad run") {
+    out2[[m]] <- fit
+    names(out2)[m] <- i
+    m <- m + 1
+  }
+  cat(i, "; ")
+toc()
+}
+toc()
+
+results = resamples(out2)
+
+summary(results)
+dotplot(results)
+
+##  Model Validation  ##
+predictions = list()
+pred.mat = list()
+for(i in 1:length(out2)) {
+  predictions[[i]] = predict(out2[[i]], validData)
+  pred.mat[[i]] = confusionMatrix(predictions[[i]], validData$Truth)
 }
 
-nest_core_interval <- function(data, type, interval, divide) {
-  
-  letter <- capitalize(substr(type, 1, 1))
-  
-  data %>%
-    select(AccountNumber, Date, Count) %>%
-    group_by(AccountNumber) %>%
-    summarise(!!paste0(letter, interval, "_", divide, "_Count") := sum(Count),
-              !!paste0(letter, interval, "_", divide, "_Mean") := mean(Count),
-              !!paste0(letter, interval, "_", divide, "_Median") := median(Count),
-              !!paste0(letter, interval, "_", divide, "_SD") := sd(Count),
-              !!paste0(letter, interval, "_", divide, "_Max") := max(Count),
-              !!paste0(letter, interval, "_", divide, "_Min") := min(Count),
-              !!paste0(letter, interval, "_", divide, "_CV") := (sd(Count) / mean(Count)),
-              
-              #######################################################################
-              
-              !!paste0(letter, interval, "_", divide, "_SLP") := (lm(Count ~ as.numeric(Date),
-                                                                     data = .)[["coefficients"]][2]),
-              !!paste0(letter, interval, "_", divide, "_OOC2") := (sum(Count >= (mean(Count) + (2 * sd(Count))))),
-              !!paste0(letter, interval, "_", divide, "_OOC3") := (sum(Count >= (mean(Count) + (3 * sd(Count)))))#,
-              
-              #######################################################################
-              
-              # !!paste0(letter, interval, "_", divide, "_P") := find_SignedSequence(Count, 1),
-              # !!paste0(letter, interval, "_", divide, "_N") := find_SignedSequence(Count, -1),
-              # !!paste0(letter, interval, "_", divide, "_Z") := find_SignedSequence(Count, 0),
-              # 
-              # #######################################################################
-              # 
-              # !!paste0(letter, interval, "_", divide, "_I") := find_LadderSequence(Count, "I"),
-              # !!paste0(letter, interval, "_", divide, "_D") := find_LadderSequence(Count, "D"),
-              # !!paste0(letter, interval, "_", divide, "_IP") := find_LadderSequence(Count, "IP"),
-              # !!paste0(letter, interval, "_", divide, "_DP") := find_LadderSequence(Count, "DP"),
-              # !!paste0(letter, interval, "_", divide, "_IN") := find_LadderSequence(Count, "IN"),
-              # !!paste0(letter, interval, "_", divide, "_DN") := find_LadderSequence(Count, "DN")
-    ) %>%
-    group_by(AccountNumber) %>%
-    nest(.key = "Cogs") %>%
-    rename(!!paste0(letter, interval, "_", divide, "_Cognostics") := Cogs)
-}
+# overall accuracy #
+unlist(lapply(pred.mat, function(X) X$overall[1]))
+# confusion matrix #
+lapply(pred.mat, function(X) X$table)
+# recall #
+unlist(lapply(pred.mat, function(X) X$byClass['Recall'])) # not available for 3-class outcomes
+# precision #
+unlist(lapply(pred.mat, function(X) X$byClass['Precision'])) # not available for 3-class outcomes
+
+
+
