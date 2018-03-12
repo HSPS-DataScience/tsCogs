@@ -155,3 +155,27 @@ nest_core_interval <- function(data, type, interval, divide) {
     nest(.key = "Cogs") %>%
     rename(!!paste0(letter, interval, "_", divide, "_Cognostics") := Cogs)
 }
+
+######################################################################
+
+#' nest_interval_unnest
+#'
+#' @param data Must include, at minimun, following columns:
+#' 1. AccountNumber -- Unique numeric identifier --
+#' 2. Date -- Daily consecutive --
+#' 3. Count -- Must include all real numbers --
+#' 
+#' @import tidyverse purr magrittr
+#'
+#' @return unnested tibble
+#' @export
+#'
+#' @examples test
+nest_interval_unnest <- function(data) {
+  
+  data %>%
+    modify_if(is_list, ~ modify_if(., is_null, 
+                                   ~ tibble(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18))) %>%
+    unnest() %>%
+    select(-num_range("", 1:10000))
+}
