@@ -58,18 +58,16 @@ nest_interval <- function(data, type, interval) {
 
   allData <- data %>%
     select(AccountNumber, Date, Count) %>%
+    group_by(AccountNumber) %>%
     filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
-                          %--% max(Date))) %>%
-    group_by(AccountNumber, tmpColName = cut(Date, 2))
+                          %--% max(Date)))
 
   rightData <- allData %>%
-    ungroup() %>%
     filter(Date >= ((max(Date) - do.call(get(derefType), list(interval)))) - 1) %>%
     nest_core_interval(type, interval, "R")
 
   leftData <- allData %>%
-    ungroup() %>%
-    filter(Date < (((max(Date) - do.call(get(derefType), list(interval)))) - 1)) %>%
+    filter(Date < ((max(Date) - do.call(get(derefType), list(interval)))) - 1) %>%
     nest_core_interval(type, interval, "L")
 
   ratioData <- left_join(leftData, rightData, by = "AccountNumber")
@@ -83,13 +81,11 @@ nest_interval <- function(data, type, interval) {
     select(AccountNumber, contains("Ratio"))
 
   allData %<>%
-    ungroup() %>%
     nest_core_interval(type, interval, "A")
 
   left_join(allData, leftData, by = "AccountNumber") %>%
     left_join(., rightData, by = "AccountNumber") %>%
-    left_join(., ratioData, by = "AccountNumber") %>%
-    group_by(AccountNumber)
+    left_join(., ratioData, by = "AccountNumber")
 }
 
 ######################################################################
