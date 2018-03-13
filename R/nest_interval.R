@@ -165,7 +165,7 @@ nest_core_interval <- function(data, type, interval, divide) {
 #' 2. Date -- Daily consecutive --
 #' 3. Count -- Must include all real numbers --
 #' 
-#' @import tidyverse purr magrittr
+#' @import tidyverse purrr magrittr
 #'
 #' @return unnested tibble
 #' @export

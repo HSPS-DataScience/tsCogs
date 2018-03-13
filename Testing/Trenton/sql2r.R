@@ -145,21 +145,25 @@ cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
 library(caret)
 library(R.utils)
 
-cogsData %>%
+cogsDataDF <- cogsData %>%
   group_by(AccountNumber) %>%
+  nest_interval_unnest()
   
 
-bob <- cogsData %>%
-  ungroup() %>%
-  select(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics, Truth) %>%
-  unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics)
+# bob <- cogsData %>%
+#   ungroup() %>%
+#   select(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics, Truth) %>%
+#   unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics)
 
 # which colnames are all NAs
 unlist(lapply(bob, function(X) all(is.na(X))))
 
 
 bob %<>% 
-  select(-D_N, -D_IN, -D_DN, -W_N, -W_IN, -W_DN, -M_N, -M_IN, -M_DN, -Y_N, -Y_IN, -Y_DN)
+  select(-D_N, -D_IN, -D_DN, 
+         -W_N, -W_IN, -W_DN,
+         -M_N, -M_IN, -M_DN, 
+         -Y_N, -Y_IN, -Y_DN)
 
 bob[is.na(bob)] <- 0
 
@@ -172,8 +176,8 @@ trainData = bob[validationIndex,]
 # trainData = cogsData[validationIndex,]
  
 # can't run it in parallel on a Windows machine
-cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
-control = trainControl(method = "repeatedcv", number = 2, repeats = 2, allowParallel = T) # 4 fold cross-validation repeated 10 times
+# cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
+control = trainControl(method = "repeatedcv", number = 2, repeats = 2) #, allowParallel = T) # 4 fold cross-validation repeated 10 times
 metric = "Kappa" #"Accuracy" usually, but here there is a low percentage of "At Risk" accounts so use Kappa
 
 
@@ -182,9 +186,7 @@ methods2 = c("adaboost", "AdaBoost.M1", "AdaBag", #"ada",
              "LogitBoost", "rpartScore",
              "rpartCost", "deepboost", "stepLDA", "naive_bayes", "nb", "stepQDA",
              "rFerns", "rocc", "rpart", "rpart1SE", "rpart2")
-methods2fast = c("LogitBoost", "rpartScore",
-             "rpartCost", "stepLDA", "naive_bayes", "nb", "stepQDA",
-             "rocc", "rpart", "rpart1SE", "rpart2")
+methods2fast = c("LogitBoost", "rpartScore", "naive_bayes", "nb", "rpart", "rpart1SE", "rpart2")
 
 
 # packages included: fastAdaBoost, adabag, ada, caTools, rpart, deepboost, klaR, MASS, naivebayes, rFerns, rocc, rpartScore
@@ -232,6 +234,38 @@ lapply(pred.mat, function(X) X$table)
 unlist(lapply(pred.mat, function(X) X$byClass['Recall'])) # not available for 3-class outcomes
 # precision #
 unlist(lapply(pred.mat, function(X) X$byClass['Precision'])) # not available for 3-class outcomes
+
+
+
+#######################################################
+##  method validation using best subsets regression  ##
+# Best Subsets Logistic Regression #
+library(bestglm)
+bob2 <- bob %>%
+  mutate(y = if_else(Truth == "Dropped", 1, 0)) %>%
+  select(-Truth)
+glmulti::glmulti(y~., data = bob2, 
+                 fitfunction = "glm", 
+                 family = binomial, 
+                 method = "h", 
+                 crit = "aic", 
+                 level = 1, 
+                 confsetsize = 5, 
+                 plotty = F, 
+                 report = F)
+#Xy = as.data.frame(cbind(bob2[], y = bob$Truth)) # removed some columns due to errors
+bestBIC = bestglm(Xy = bob2, family = binomial(), IC = "BIC")
+coef(bestBIC$BestModel)
+# calculate predictions
+pred.bestBIC = as.matrix(cbind(rep(1,nrow(validData4)), validData4[,names(coef(bestBIC$BestModel))[-1]])) %*% coef(bestBIC$BestModel)
+qplot(x = pred.bestBIC, geom = "density", fill = validData4$outcome, alpha = I(.5)) +
+  theme_bw() +
+  labs(x = "Distribution of Predictions", y = "", fill = "0 = Healthy\n1 = At Risk")
+preds.best = data.frame(outcome = validData4$outcome, prediction = pred.bestBIC)
+preds.best$prediction01 = 0
+preds.best$prediction01[preds.best$prediction >= 0.5] = 1
+with(preds.best, table(outcome, prediction01)) # 15% misclassified (85% accuracy)
+
 
 
 
