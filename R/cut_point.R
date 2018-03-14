@@ -32,5 +32,5 @@ cut_point <- function(data, movAvg = 21, startQuant = 0.2,
            zeroDate = max(Date[tmp_cumSum < movAvg_zeroDays]),
            endDate = zeroDate - movAvg,
            cutDate = endDate - dialBack) %>%
-  filter(Date <= cutDate)
+    filter(Date <= cutDate)
 }
