@@ -61,7 +61,7 @@ nest_interval <- function(data, type, interval) {
     group_by(AccountNumber) %>%
     filter(Date %within% ((max(Date) - do.call(get(derefType), list(interval * 2)))
                           %--% max(Date)))
-  
+
   allowedData <- intervalData %>%
     # Remove all accounts that don't meet ENTIRE interval requirements
     filter(min(Date) == max(Date) - do.call(get(derefType), 

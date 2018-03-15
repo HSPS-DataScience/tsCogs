@@ -128,15 +128,21 @@ toc()
 
 
 # cognostic/feature set generation (24 min)
+# tic()
 cogsData <- cutData %>%
+#  filter(AccountNumber %in% c('001307', '001354', '8888', '000019')) %>%
+  select(AccountNumber, Date, Count) %>%
+  group_by(AccountNumber) %>%
   nest_todo() %>%
-  nest_append_interval(cutData, "years", 1) %>%
-  nest_append_interval(cutData, "months", 6) %>%
-  nest_append_interval(cutData, "months", 3) %>%
+  # nest_append_interval(cutData, "years", 1) %>%
+  # nest_append_interval(cutData, "months", 6) %>%
+  # nest_append_interval(cutData, "months", 3) %>%
   nest_append_interval(cutData, "weeks", 6) %>%
   nest_append_interval(cutData, "days", 14) %>%
-  left_join(truthData, by = "AccountNumber")
+  left_join(truthData, by = "AccountNumber") %>%
+  group_by(AccountNumber)
 toc()
+
 # load("~/eClaimEnv-wClaimsCogs20180308.rdata")
 
 cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
@@ -146,35 +152,26 @@ library(caret)
 library(R.utils)
 
 cogsDataDF <- cogsData %>%
-  group_by(AccountNumber) %>%
-  nest_interval_unnest()
-  
+  nest_interval_unnest() %>%
+  select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"))
 
 # bob <- cogsData %>%
 #   ungroup() %>%
 #   select(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics, Truth) %>%
-#   unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics)
+#   unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics) %>%
+#   select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"))
 
 # which colnames are all NAs
-unlist(lapply(bob, function(X) all(is.na(X))))
+badCols <- names(which(unlist(lapply(cogsDataDF, function(X) all(is.na(X))))))
+cogsDataDF <- cogsDataDF[,!(names(cogsDataDF) %in% badCols)]
 
+# change all NAs to Zeros so models will run
+cogsDataDF[is.na(cogsDataDF)] <- 0
 
-bob %<>% 
-  select(-D_N, -D_IN, -D_DN, 
-         -W_N, -W_IN, -W_DN,
-         -M_N, -M_IN, -M_DN, 
-         -Y_N, -Y_IN, -Y_DN)
+validationIndex = createDataPartition(cogsDataDF$Truth, p = 0.8, list = F) # 80% train 20% validation
+validData = cogsDataDF[-validationIndex,]
+trainData = cogsDataDF[validationIndex,]
 
-bob[is.na(bob)] <- 0
-
-validationIndex = createDataPartition(bob$Truth, p = 0.8, list = F) # 80% train 20% validation
-validData = bob[-validationIndex,]
-trainData = bob[validationIndex,]
-
-# validationIndex = createDataPartition(cogsData$Truth, p = 0.8, list = F) # 80% train 20% validation
-# validData = cogsData[-validationIndex,]
-# trainData = cogsData[validationIndex,]
- 
 # can't run it in parallel on a Windows machine
 # cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
 control = trainControl(method = "repeatedcv", number = 2, repeats = 2) #, allowParallel = T) # 4 fold cross-validation repeated 10 times
@@ -196,12 +193,11 @@ tic()
 set.seed(1234)
 out2 <- list()
 m <- 1
-for(i in methods2fast) {
-  fit <- tryCatch( train(Truth ~.,
-                        data = trainData, #%>% select(-AccountNumber, -prediction),
-                        method = i,
-                        trControl = control,
-                        metric = metric),
+for(i in methods2) {
+  fit <- tryCatch( train(Truth ~., data = trainData %>% 
+                           ungroup() %>% 
+                           select(-AccountNumber, -prediction),
+                        method = i, trControl = control, metric = metric),
                   error = function(e) "bad run" )
   if(fit != "bad run") {
     out2[[m]] <- fit

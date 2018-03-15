@@ -69,45 +69,16 @@ jack <- cutData %>%
 toc()
 
 
-# Multidplyr
-library(multidplyr)
-
-cluster_library()
-
-tic()
-jack <- cutData %>%
-  nest_todo()
-toc()
-
-
-
 
 
 
 ##### Testing ####
 
-joe <- cutData %>%
-  #filter(AccountNumber %in% c("000040"))
-  filter(AccountNumber %in% c("000019", "000040"))
-
-cogsData <- cutData %>%
-  nest_todo() %>%
-  nest_append_interval(cutData, "years", 1) %>%
-  nest_append_interval(cutData, "months", 6) %>%
-  nest_append_interval(cutData, "months", 3) %>%
-  nest_append_interval(cutData, "weeks", 6) %>%
-  nest_append_interval(cutData, "days", 14) %>%
-  left_join(truthData, by = "AccountNumber") %>%
-  group_by(AccountNumber)
-
-
-#### New Big Checking ####
-
 bob <- cutData %>%
   filter(AccountNumber %in% c('001307', '001354', '8888')) %>%
   select(AccountNumber, Date, Count) %>%
   group_by(AccountNumber)
-  
+
 goose <- bob %>%
   nest_todo() %>%
   nest_append_interval(bob, "years", 1) %>%
@@ -123,3 +94,4 @@ joe <- goose %>%
   nest_interval_unnest()
 
 ##########################
+
