@@ -89,9 +89,9 @@ goose <- bob %>%
   #left_join(truthData, by = "AccountNumber") %>%
   group_by(AccountNumber)
 
-##########################
-  
+
 joe <- goose %>%
   nest_interval_unnest()
 
+##########################
 
