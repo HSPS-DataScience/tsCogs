@@ -134,16 +134,16 @@ cogsData <- cutData %>%
   select(AccountNumber, Date, Count) %>%
   group_by(AccountNumber) %>%
   nest_todo() %>%
-  # nest_append_interval(cutData, "years", 1) %>%
-  # nest_append_interval(cutData, "months", 6) %>%
-  # nest_append_interval(cutData, "months", 3) %>%
+  nest_append_interval(cutData, "years", 1) %>%
+  nest_append_interval(cutData, "months", 6) %>%
+  nest_append_interval(cutData, "months", 3) %>%
   nest_append_interval(cutData, "weeks", 6) %>%
   nest_append_interval(cutData, "days", 14) %>%
   left_join(truthData, by = "AccountNumber") %>%
   group_by(AccountNumber)
 toc()
 
-# load("~/eClaimEnv-wClaimsCogs20180308.rdata")
+# load("~/eClaimEnv-wClaimsCogs20180314.rdata")
 
 cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
 
@@ -151,15 +151,10 @@ cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
 library(caret)
 library(R.utils)
 
+# take care of NULLs and unnest everything into a more standard dataframe for modeling
 cogsDataDF <- cogsData %>%
   nest_interval_unnest() %>%
   select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"))
-
-# bob <- cogsData %>%
-#   ungroup() %>%
-#   select(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics, Truth) %>%
-#   unnest(D_Cognostics, W_Cognostics, M_Cognostics, Y_Cognostics) %>%
-#   select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"))
 
 # which colnames are all NAs
 badCols <- names(which(unlist(lapply(cogsDataDF, function(X) all(is.na(X))))))
@@ -168,13 +163,24 @@ cogsDataDF <- cogsDataDF[,!(names(cogsDataDF) %in% badCols)]
 # change all NAs to Zeros so models will run
 cogsDataDF[is.na(cogsDataDF)] <- 0
 
-validationIndex = createDataPartition(cogsDataDF$Truth, p = 0.8, list = F) # 80% train 20% validation
-validData = cogsDataDF[-validationIndex,]
-trainData = cogsDataDF[validationIndex,]
+
+cogsDataDFratio <- cogsData %>%
+  nest_interval_unnest() %>%
+  select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"), 
+         -matches("_A_"), -matches("_L_"), -matches("_R_"))
+badColsratio <- names(which(unlist(lapply(cogsDataDFratio, function(X) all(is.na(X))))))
+cogsDataDFratio <- cogsDataDFratio[,!(names(cogsDataDFratio) %in% badColsratio)]
+cogsDataDFratio[is.na(cogsDataDFratio)] <- 0
+
+
+
+validationIndex = createDataPartition(cogsDataDFratio$Truth, p = 0.8, list = F) # 80% train 20% validation
+validData = cogsDataDFratio[-validationIndex,]
+trainData = cogsDataDFratio[validationIndex,]
 
 # can't run it in parallel on a Windows machine
 # cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
-control = trainControl(method = "repeatedcv", number = 2, repeats = 2) #, allowParallel = T) # 4 fold cross-validation repeated 10 times
+control = trainControl(method = "repeatedcv", number = 2, repeats = 1) #, allowParallel = T) # 4 fold cross-validation repeated 10 times
 metric = "Kappa" #"Accuracy" usually, but here there is a low percentage of "At Risk" accounts so use Kappa
 
 
@@ -193,11 +199,11 @@ tic()
 set.seed(1234)
 out2 <- list()
 m <- 1
-for(i in methods2) {
+for(i in methods2[c(2:6,8:length(methods2))]) {
   fit <- tryCatch( train(Truth ~., data = trainData %>% 
                            ungroup() %>% 
                            select(-AccountNumber, -prediction),
-                        method = i, trControl = control, metric = metric),
+                        method = i, trControl = control, metric = metric, verbose = F),
                   error = function(e) "bad run" )
   if(fit != "bad run") {
     out2[[m]] <- fit
@@ -230,37 +236,6 @@ lapply(pred.mat, function(X) X$table)
 unlist(lapply(pred.mat, function(X) X$byClass['Recall'])) # not available for 3-class outcomes
 # precision #
 unlist(lapply(pred.mat, function(X) X$byClass['Precision'])) # not available for 3-class outcomes
-
-
-
-#######################################################
-##  method validation using best subsets regression  ##
-# Best Subsets Logistic Regression #
-library(bestglm)
-bob2 <- bob %>%
-  mutate(y = if_else(Truth == "Dropped", 1, 0)) %>%
-  select(-Truth)
-glmulti::glmulti(y~., data = bob2, 
-                 fitfunction = "glm", 
-                 family = binomial, 
-                 method = "h", 
-                 crit = "aic", 
-                 level = 1, 
-                 confsetsize = 5, 
-                 plotty = F, 
-                 report = F)
-#Xy = as.data.frame(cbind(bob2[], y = bob$Truth)) # removed some columns due to errors
-bestBIC = bestglm(Xy = bob2, family = binomial(), IC = "BIC")
-coef(bestBIC$BestModel)
-# calculate predictions
-pred.bestBIC = as.matrix(cbind(rep(1,nrow(validData4)), validData4[,names(coef(bestBIC$BestModel))[-1]])) %*% coef(bestBIC$BestModel)
-qplot(x = pred.bestBIC, geom = "density", fill = validData4$outcome, alpha = I(.5)) +
-  theme_bw() +
-  labs(x = "Distribution of Predictions", y = "", fill = "0 = Healthy\n1 = At Risk")
-preds.best = data.frame(outcome = validData4$outcome, prediction = pred.bestBIC)
-preds.best$prediction01 = 0
-preds.best$prediction01[preds.best$prediction >= 0.5] = 1
-with(preds.best, table(outcome, prediction01)) # 15% misclassified (85% accuracy)
 
 
 
