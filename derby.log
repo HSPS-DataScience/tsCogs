@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
-Wed Mar 14 08:56:52 MDT 2018:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0162-2503-8ae9-000015239988 
-on database directory memory:C:\Users\trenton.pulsipher\Documents\R\r_prjs\tsCogs\databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@43f4ebe9 
-Loaded from file:/C:/Users/trenton.pulsipher/AppData/Local/spark/spark-2.2.0-bin-hadoop2.7/jars/derby-10.12.1.1.jar
+Fri Mar 16 08:32:14 MDT 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0162-2f39-b741-000014bcfde0 
+on database directory memory:/home/trenton/R/R_prjs/tsCogs/databaseName=metastore_db with class loader org.apache.spark.sql.hive.client.IsolatedClientLoader$$anon$1@4fdfb2d9 
+Loaded from file:/home/trenton/spark/spark-2.2.0-bin-hadoop2.7/jars/derby-10.12.1.1.jar
 java.vendor=Oracle Corporation
-java.runtime.version=1.8.0_161-b12
-user.dir=C:\Users\trenton.pulsipher\Documents\R\r_prjs\tsCogs
-os.name=Windows 10
+java.runtime.version=1.8.0_151-8u151-b12-0ubuntu0.17.10.2-b12
+user.dir=/home/trenton/R/R_prjs/tsCogs
+os.name=Linux
 os.arch=amd64
-os.version=10.0
+os.version=4.13.0-37-generic
 derby.system.home=null
 Database Class Loader started - derby.database.classpath=''

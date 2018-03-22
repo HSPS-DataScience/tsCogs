@@ -143,7 +143,7 @@ cogsData <- cutData %>%
   group_by(AccountNumber)
 toc()
 
-# load("~/eClaimEnv-wClaimsCogs20180314.rdata")
+# load("~/Documents/dataCogs-20180316.Rdata")
 
 cogsData$Truth <- factor(cogsData$Truth, levels = c("Healthy", "Dropped"))
 
@@ -179,8 +179,9 @@ validData = cogsDataDFratio[-validationIndex,]
 trainData = cogsDataDFratio[validationIndex,]
 
 # can't run it in parallel on a Windows machine
-# cl = parallel::makeCluster(7) # create 7 node cluster to run in parallel
-control = trainControl(method = "repeatedcv", number = 2, repeats = 1) #, allowParallel = T) # 4 fold cross-validation repeated 10 times
+library(doMC)
+registerDoMC(cores = 7)
+control = trainControl(method = "repeatedcv", number = 2, repeats = 2, allowParallel = T) # 2-fold cross-validation repeated 2 times
 metric = "Kappa" #"Accuracy" usually, but here there is a low percentage of "At Risk" accounts so use Kappa
 
 
@@ -189,7 +190,7 @@ methods2 = c("adaboost", "AdaBoost.M1", "AdaBag", #"ada",
              "LogitBoost", "rpartScore",
              "rpartCost", "deepboost", "stepLDA", "naive_bayes", "nb", "stepQDA",
              "rFerns", "rocc", "rpart", "rpart1SE", "rpart2")
-methods2fast = c("LogitBoost", "rpartScore", "naive_bayes", "nb", "rpart", "rpart1SE", "rpart2")
+methods2fast = c("adaboost", "AdaBoost.M1", "deepboost")
 
 
 # packages included: fastAdaBoost, adabag, ada, caTools, rpart, deepboost, klaR, MASS, naivebayes, rFerns, rocc, rpartScore
@@ -199,8 +200,10 @@ tic()
 set.seed(1234)
 out2 <- list()
 m <- 1
-for(i in methods2[c(2:6,8:length(methods2))]) {
-  fit <- tryCatch( train(Truth ~., data = trainData %>% 
+for(i in methods2fast) {
+#  tic(); i = "deepboost"
+  fit <- tryCatch( train(Truth ~., 
+                         data = trainData %>% 
                            ungroup() %>% 
                            select(-AccountNumber, -prediction),
                         method = i, trControl = control, metric = metric, verbose = F),
@@ -213,7 +216,7 @@ for(i in methods2[c(2:6,8:length(methods2))]) {
   cat(i, "; ")
 toc()
 }
-toc()
+
 
 results = resamples(out2)
 
@@ -232,11 +235,13 @@ for(i in 1:length(out2)) {
 unlist(lapply(pred.mat, function(X) X$overall[1]))
 # confusion matrix #
 lapply(pred.mat, function(X) X$table)
-# recall #
-unlist(lapply(pred.mat, function(X) X$byClass['Recall'])) # not available for 3-class outcomes
-# precision #
-unlist(lapply(pred.mat, function(X) X$byClass['Precision'])) # not available for 3-class outcomes
 
+names(predictions) <- paste("pred", names(out2), sep = "_")
 
+out <- predictions %>%
+  as.tibble() %>%
+  mutate(AccountNumber = validData$AccountNumber, 
+         Truth = validData$Truth)
 
+with(out, table(pred_adaboost, pred_AdaBoost.M1, Truth))
 
