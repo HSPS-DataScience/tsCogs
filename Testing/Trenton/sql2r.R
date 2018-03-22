@@ -181,7 +181,7 @@ trainData = cogsDataDFratio[validationIndex,]
 # can't run it in parallel on a Windows machine
 library(doMC)
 registerDoMC(cores = 7)
-control = trainControl(method = "repeatedcv", number = 10, repeats = 2, allowParallel = T) # 4 fold cross-validation repeated 10 times
+control = trainControl(method = "repeatedcv", number = 2, repeats = 2, allowParallel = T) # 2-fold cross-validation repeated 2 times
 metric = "Kappa" #"Accuracy" usually, but here there is a low percentage of "At Risk" accounts so use Kappa
 
 
@@ -200,8 +200,8 @@ tic()
 set.seed(1234)
 out2 <- list()
 m <- 1
-for(i in methods2fast[c(1,2,7)]) {
-#  i = "AdaBag"
+for(i in methods2fast) {
+#  tic(); i = "deepboost"
   fit <- tryCatch( train(Truth ~., 
                          data = trainData %>% 
                            ungroup() %>% 
@@ -231,22 +231,17 @@ for(i in 1:length(out2)) {
   pred.mat[[i]] = confusionMatrix(predictions[[i]], validData$Truth)
 }
 
-##  Model Validation  ##
-predictions = list()
-pred.mat = list()
-for(i in 1:length(out2)) {
-  predictions[[i]] = predict(out2[[i]], cogsDataDFratio)
-  pred.mat[[i]] = confusionMatrix(predictions[[i]], cogsDataDFratio$Truth)
-}
 # overall accuracy #
 unlist(lapply(pred.mat, function(X) X$overall[1]))
 # confusion matrix #
 lapply(pred.mat, function(X) X$table)
-# recall #
-unlist(lapply(pred.mat, function(X) X$byClass['Recall'])) # not available for 3-class outcomes
-# precision #
-unlist(lapply(pred.mat, function(X) X$byClass['Precision'])) # not available for 3-class outcomes
 
+names(predictions) <- paste("pred", names(out2), sep = "_")
 
+out <- predictions %>%
+  as.tibble() %>%
+  mutate(AccountNumber = validData$AccountNumber, 
+         Truth = validData$Truth)
 
+with(out, table(pred_adaboost, pred_AdaBoost.M1, Truth))
 
