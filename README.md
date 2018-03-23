@@ -12,7 +12,7 @@ You can install tsCogs from github with:
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("clarkjoe/tsCogs")
+devtools::install_github("HSPS-DataScience/tsCogs")
 ```
 
 Example
