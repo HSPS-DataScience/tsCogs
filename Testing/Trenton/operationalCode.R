@@ -28,26 +28,33 @@ toc()
 ruleData <- rawData %>%
   group_by(AccountNumber) %>%
   mutate(totalCount = sum(Count),
-         numDays = n()) %>%
-  filter(totalCount >= 600,
-         numDays >= 90) %>%
-  select(-tmp_reverseSign, -tmp_cumSum)
+         numDays = n(),
+         last2weeks = (max(Date) - 14)) %>%
+  mutate(totalCountLast2weeks = sum(Count[Date >= last2weeks])) %>%
+  mutate(Outcome = if_else(totalCount < 600, "Small Practice",
+                           if_else(numDays < 90, "Still Implementing",
+                                   if_else(totalCountLast2weeks > 0, "need to predict", "Gone")))) %>%
+  select(AccountNumber, Date, Count, Outcome)
 
-toc()
-
+# table summarizing the number of Accounts per Outcome
+ruleData %>%
+  slice(1) %>%
+  ungroup() %>%
+  select(Outcome) %>%
+  table()
 
 # cognostic/feature set generation (24 min)
 # tic()
 cogsData <- ruleData %>%
   #  filter(AccountNumber %in% c('001307', '001354', '8888', '000019')) %>%
-  select(AccountNumber, Date, Count) %>%
+  filter(Outcome == "need to predict") %>%  
   group_by(AccountNumber) %>%
   nest_todo() %>%
-  nest_append_interval(cutData, "years", 1) %>%
-  nest_append_interval(cutData, "months", 6) %>%
-  nest_append_interval(cutData, "months", 3) %>%
-  nest_append_interval(cutData, "weeks", 6) %>%
-  nest_append_interval(cutData, "days", 14) %>%
+  nest_append_interval(ruleData, "years", 1) %>%
+  nest_append_interval(ruleData, "months", 6) %>%
+  nest_append_interval(ruleData, "months", 3) %>%
+  nest_append_interval(ruleData, "weeks", 6) %>%
+  nest_append_interval(ruleData, "days", 14) %>%
 #  left_join(truthData, by = "AccountNumber") %>%
   group_by(AccountNumber)
 toc()
@@ -56,7 +63,10 @@ cogsDataDFratio <- cogsData %>%
   nest_interval_unnest() %>%
   select(-ends_with("_N"), -ends_with("_IN"), -ends_with("DN"), 
          -matches("_A_"), -matches("_L_"), -matches("_R_"))
+
 badColsratio <- names(which(unlist(lapply(cogsDataDFratio, function(X) all(is.na(X))))))
+
 cogsDataDFratio <- cogsDataDFratio[,!(names(cogsDataDFratio) %in% badColsratio)]
+
 cogsDataDFratio[is.na(cogsDataDFratio)] <- 0
 
