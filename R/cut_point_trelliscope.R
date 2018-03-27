@@ -1,4 +1,4 @@
-#' cutPoint_trelliscope
+#' cut_point_trelliscope
 #'
 #' @param data Must include, at minimum, following columns:    
 #' 1. AccountNumber -- Unique numeric identifier --    
@@ -18,7 +18,7 @@
 #' @export
 #' 
 #' @examples test
-cutPoint_trelliscope <- function(data, movAvg = 21, trans = "identity",
+cut_point_trelliscope <- function(data, movAvg = 21, trans = "identity",
                                  name = "cutPoint Results", group = "common", 
                                  path = "~/trelliscope", selfContained = F) {
   
@@ -41,12 +41,12 @@ cutPoint_trelliscope <- function(data, movAvg = 21, trans = "identity",
     nest() %>%
     mutate(
       panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
-                         geom_line(alpha = 0.5) +
+                         geom_point(alpha = 0.5) +
                          geom_line(aes(y = M_AVG)) +
-                         geom_vline(aes(xintercept = startDate), color = "green", linetype = 3) +
+                         geom_vline(aes(xintercept = startDate), color = "blue", linetype = 5) +
                          geom_vline(aes(xintercept = zeroDate), color = "red") +
                          geom_vline(aes(xintercept = endDate), color = "red") +
-                         geom_vline(aes(xintercept = cutDate), color = "green", linetype = 3) +
+                         geom_vline(aes(xintercept = cutDate), color = "blue", linetype = 5) +
                          scale_y_continuous(trans = trans) +
                          theme_bw() 
       )
