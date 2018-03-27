@@ -41,8 +41,8 @@ cut_point_trelliscope <- function(data, movAvg = 21, trans = "identity",
     nest() %>%
     mutate(
       panel = map_plot(data, ~ ggplot(., aes(x = Date, y = Count)) +
-                         geom_point(alpha = 0.5) +
-                         geom_line(aes(y = M_AVG)) +
+                         geom_point(alpha = 0.3) +
+                         geom_line(aes(y = M_AVG), size = 0.7) +
                          geom_vline(aes(xintercept = startDate), color = "blue", linetype = 5) +
                          geom_vline(aes(xintercept = zeroDate), color = "red") +
                          geom_vline(aes(xintercept = endDate), color = "red") +
