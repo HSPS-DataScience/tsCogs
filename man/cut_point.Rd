@@ -9,9 +9,11 @@ cut_point(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1,
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+}}
 
 \item{movAvg}{Moving Average -- Defaults to 21}
 

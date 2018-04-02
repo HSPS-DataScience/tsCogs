@@ -1,18 +1,23 @@
-#' cut_point
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' @param movAvg Moving Average -- Defaults to 21
-#' @param startQuant Quantile percentage to determine start date cutPoint -- Defaults to 0.2 
-#' @param movAvg_zeroDays Number of consecetive moving averages evaluated at zero to begin end date cutPoint process -- Defaults to 1
-#' @param dialBack Number of days to 'dialBack' to determine a new end date cutPoint -- Defaults to 0
-#'
+#' @title cut_point
 #' @import tidyverse lubridate
+#' @export
+#' @description Stuff
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' @param movAvg Moving Average 
+#' * Default is `21``
+#' @param startQuant Quantile percentage to determine start date cut_point
+#' * Default is `0.2` 
+#' @param movAvg_zeroDays Number of consecetive moving averages evaluated at zero to begin end date cut_point process
+#' * Defaults to `1`
+#' @param dialBack Number of days to 'dialBack' to determine a new end date cutPoint
+#' * Defaults to `0`
+#'
 #' 
 #' @return filtered tibble
-#' @export
 #'
 #' @examples test
 cut_point <- function(data, movAvg = 21, startQuant = 0.2, 

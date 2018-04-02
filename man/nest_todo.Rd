@@ -8,9 +8,11 @@ nest_todo(data)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+}}
 }
 \value{
 nested joined tibble
@@ -18,10 +20,12 @@ nested joined tibble
 \description{
 Designed to create then join four nested tibbles into one tibble
 with "AccountNumber" being the identifier:
-1. Daily
-2. Weekly
-3. Monthly
-4. Yearly
+\enumerate{
+\item Daily
+\item Weekly
+\item Monthly
+\item Yearly
+}
 }
 \examples{
 test

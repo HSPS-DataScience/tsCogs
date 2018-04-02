@@ -8,17 +8,21 @@ nest_core(data, type)
 }
 \arguments{
 \item{data}{Must include, at minimun, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+}}
 
 \item{type}{All meaningfull specifications in
 English language are supported.
 Stable arguments are:
-1. day
-2. week
-3. month
-4. year}
+\enumerate{
+\item day
+\item week
+\item month
+\item year
+}}
 }
 \value{
 nested tibble
@@ -26,11 +30,13 @@ nested tibble
 \description{
 Designed to append on numerous descriptive numeric cognostics as columns
 then nest into a tibble with "AccountNumber" being the identifier.
-Based on `type` parameter, will aggregate and create cognostics by:
-1. Day
-2. Week
-3. Month
-4. Year
+Based on \code{type} parameter, will aggregate and create cognostics by:
+\enumerate{
+\item Day
+\item Week
+\item Month
+\item Year
+}
 }
 \examples{
 test

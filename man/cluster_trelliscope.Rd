@@ -5,33 +5,54 @@
 \title{cluster_trelliscope}
 \usage{
 cluster_trelliscope(data, trans = "identity", name = "Cluster Results",
-  group = "common", path = "~/trelliscope", selfContained = F)
+  group = "common", path = "~/trelliscope", selfContained = FALSE)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Many date columns, with weekly counts within cells -- Weekly consecutive --
-3. features
-4. prediction}
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
+\item Prediction
+}}
 
-\item{trans}{scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --}
+\item{trans}{Scale of the y-axis, see \code{ggplot2::scale_y_continuous()}
+\itemize{
+\item Default is `identity``
+}}
 
-\item{name}{name of the trelliscope view -- defaults to "Cluster Results" --}
+\item{name}{Name of the trelliscope view
+\itemize{
+\item Default is \code{Cluster Results}
+}}
 
-\item{group}{group of trelliscope views -- defaults to "common" --}
+\item{group}{Group of trelliscope views
+\itemize{
+\item Default is \code{common}
+}}
 
-\item{path}{the base directory of trelliscope app -- defaults to "~/trelliscope" --}
+\item{path}{Base directory of trelliscope app
+\itemize{
+\item Default is \code{~/trelliscope}
+}}
 
-\item{selfContained}{create the individual pre-rendered panels -- defaults to FALSE --
-
-Intended to take data in weekly long format for trelliscope use}
+\item{selfContained}{Create the individual pre-rendered panels
+\itemize{
+\item Default is \code{FALSE}
+}}
 }
 \value{
-trelliscopejs
+A trelliscopejs object
 }
 \description{
-cluster_trelliscope
+\strong{Intented to take data in long format for trelliscopejs use}
 }
 \examples{
 test
+}
+\seealso{
+\itemize{
+\item \code{ggplot2::scale_y_continuous()}
+\item \href{https://hafen.github.io/trelliscopejs/}{trelliscopejs}
+}
 }

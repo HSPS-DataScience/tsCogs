@@ -8,15 +8,19 @@ nest_interval(data, type, interval)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+}}
 
 \item{type}{Must be one of following strings:
-1. "years"
-2. "months"
-3. "weeks"
-4. "days"}
+\enumerate{
+\item "years"
+\item "months"
+\item "weeks"
+\item "days"
+}}
 
 \item{interval}{Must be positive integer excluding zero}
 }

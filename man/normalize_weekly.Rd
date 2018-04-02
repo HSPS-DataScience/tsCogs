@@ -8,10 +8,12 @@ normalize_weekly(data)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --
-Intended to take data from long SQL Server table format}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+Intended to take data from long SQL Server table format
+}}
 }
 \value{
 spread tibble

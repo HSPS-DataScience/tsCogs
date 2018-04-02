@@ -8,9 +8,11 @@ nest_interval_unnest(data)
 }
 \arguments{
 \item{data}{Must include, at minimun, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Date -- Daily consecutive --
+\item Count -- Must include all real numbers --
+}}
 }
 \value{
 unnested tibble

@@ -10,9 +10,11 @@ find_SignedSequence(data, number)
 \item{data}{Must be vector of numbers}
 
 \item{number}{Must be one of following integers:
-1. -1 -- Negative Integers
-2. 0 -- Zero Integers
-3. 1 -- Positive Integers}
+\enumerate{
+\item -1 -- Negative Integers
+\item 0 -- Zero Integers
+\item 1 -- Positive Integers
+}}
 }
 \value{
 integer

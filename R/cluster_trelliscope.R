@@ -1,26 +1,34 @@
-#' cluster_trelliscope
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Many date columns, with weekly counts within cells -- Weekly consecutive --
-#' 3. features
-#' 4. prediction
-#' @param trans scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --
-#' @param name name of the trelliscope view -- defaults to "Cluster Results" --
-#' @param group group of trelliscope views -- defaults to "common" --
-#' @param path the base directory of trelliscope app -- defaults to "~/trelliscope" --
-#' @param selfContained create the individual pre-rendered panels -- defaults to FALSE --
-#' 
-#' Intended to take data in weekly long format for trelliscope use
+#' @title cluster_trelliscope
 #' @import tidyverse lubridate trelliscopejs ggplot2 rbokeh
-#' 
-#' @return trelliscopejs
 #' @export
+#' @description **Intented to take data in long format for trelliscopejs use**
+#' 
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' * Prediction
+#' @param trans Scale of the y-axis, see `ggplot2::scale_y_continuous()`
+#' * Default is `identity`
+#' @param name Name of the trelliscope view
+#' * Default is `Cluster Results`
+#' @param group Group of trelliscope views
+#' * Default is `common`
+#' @param path Base directory of trelliscope app
+#' * Default is `~/trelliscope`
+#' @param selfContained Create the individual pre-rendered panels
+#' * Default is `FALSE`
+#' 
+#' @return A trelliscopejs object
+#' 
+#' @seealso 
+#' * `ggplot2::scale_y_continuous()`
+#' * [`trelliscopejs`](https://hafen.github.io/trelliscopejs/)
 #'
 #' @examples test
 cluster_trelliscope <- function(data, trans = "identity",
                                 name = "Cluster Results", group = "common", 
-                                path = "~/trelliscope", selfContained = F) {
+                                path = "~/trelliscope", selfContained = FALSE) {
   
   data %>%
     mutate(Date = ymd(Date)) %>%

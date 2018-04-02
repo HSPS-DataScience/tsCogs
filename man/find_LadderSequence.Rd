@@ -10,12 +10,14 @@ find_LadderSequence(data, sequence)
 \item{data}{Must be vector of numbers}
 
 \item{sequence}{Must be one of following strings:
-1. "I" -- Increasing
-2. "D" -- Decreasing
-3. "IP" -- Increasing Positive
-4. "DP" -- Decreasing Positive
-5. "IN" -- Increasing Negative
-6. "DN" -- Decreasing Negative}
+\enumerate{
+\item "I" -- Increasing
+\item "D" -- Decreasing
+\item "IP" -- Increasing Positive
+\item "DP" -- Decreasing Positive
+\item "IN" -- Increasing Negative
+\item "DN" -- Decreasing Negative
+}}
 }
 \value{
 integer

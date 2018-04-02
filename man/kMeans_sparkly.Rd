@@ -8,9 +8,11 @@ kMeans_sparkly(data, centers = 10)
 }
 \arguments{
 \item{data}{Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Many date columns, with weekly counts within cells -- Weekly consecutive --
-Intended to take data in weekly long format}
+\enumerate{
+\item AccountNumber -- Unique numeric identifier --
+\item Many date columns, with weekly counts within cells -- Weekly consecutive --
+Intended to take data in weekly long format
+}}
 }
 \value{
 spread tibble

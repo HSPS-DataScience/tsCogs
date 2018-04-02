@@ -29,7 +29,7 @@
   
 <meta property="og:title" content="cluster_trelliscope — cluster_trelliscope" />
 
-<meta property="og:description" content="cluster_trelliscope" />
+<meta property="og:description" content="Intented to take data in long format for trelliscopejs use" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -91,49 +91,66 @@
     </div>
 
     
-    <p>cluster_trelliscope</p>
+    <p><strong>Intented to take data in long format for trelliscopejs use</strong></p>
     
 
     <pre class="usage"><span class='fu'>cluster_trelliscope</span>(<span class='no'>data</span>, <span class='kw'>trans</span> <span class='kw'>=</span> <span class='st'>"identity"</span>, <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"Cluster Results"</span>,
-  <span class='kw'>group</span> <span class='kw'>=</span> <span class='st'>"common"</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"~/trelliscope"</span>, <span class='kw'>selfContained</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
+  <span class='kw'>group</span> <span class='kw'>=</span> <span class='st'>"common"</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"~/trelliscope"</span>, <span class='kw'>selfContained</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimum, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Many date columns, with weekly counts within cells -- Weekly consecutive --
-3. features
-4. prediction</p></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+<li><p>Prediction</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>trans</th>
-      <td><p>scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --</p></td>
+      <td><p>Scale of the y-axis, see <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous'>ggplot2::scale_y_continuous()</a></code></p><ul>
+<li><p>Default is `identity``</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>name</th>
-      <td><p>name of the trelliscope view -- defaults to "Cluster Results" --</p></td>
+      <td><p>Name of the trelliscope view</p><ul>
+<li><p>Default is <code>Cluster Results</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>group</th>
-      <td><p>group of trelliscope views -- defaults to "common" --</p></td>
+      <td><p>Group of trelliscope views</p><ul>
+<li><p>Default is <code>common</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>path</th>
-      <td><p>the base directory of trelliscope app -- defaults to "~/trelliscope" --</p></td>
+      <td><p>Base directory of trelliscope app</p><ul>
+<li><p>Default is <code>~/trelliscope</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>selfContained</th>
-      <td><p>create the individual pre-rendered panels -- defaults to FALSE --</p>
-<p>Intended to take data in weekly long format for trelliscope use</p></td>
+      <td><p>Create the individual pre-rendered panels</p><ul>
+<li><p>Default is <code>FALSE</code></p></li>
+</ul></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>trelliscopejs</p>
+    <p>A trelliscopejs object</p>
+    
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <ul>
+<li><p><code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous'>ggplot2::scale_y_continuous()</a></code></p></li>
+<li><p><a href='https://hafen.github.io/trelliscopejs/'>trelliscopejs</a></p></li>
+</ul>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -145,6 +162,8 @@
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#see-also">See also</a></li>
       
       <li><a href="#examples">Examples</a></li>
     </ul>

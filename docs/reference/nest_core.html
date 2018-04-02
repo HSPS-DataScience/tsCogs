@@ -31,11 +31,12 @@
 
 <meta property="og:description" content="Designed to append on numerous descriptive numeric cognostics as columns
 then nest into a tibble with "AccountNumber" being the identifier.
-Based on `type` parameter, will aggregate and create cognostics by:
-1. Day
-2. Week
-3. Month
-4. Year" />
+Based on type parameter, will aggregate and create cognostics by:
+Day
+Week
+Month
+Year
+" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -99,11 +100,12 @@ Based on `type` parameter, will aggregate and create cognostics by:
     
     <p>Designed to append on numerous descriptive numeric cognostics as columns
 then nest into a tibble with "AccountNumber" being the identifier.
-Based on `type` parameter, will aggregate and create cognostics by:
-1. Day
-2. Week
-3. Month
-4. Year</p>
+Based on <code>type</code> parameter, will aggregate and create cognostics by:</p><ol>
+<li><p>Day</p></li>
+<li><p>Week</p></li>
+<li><p>Month</p></li>
+<li><p>Year</p></li>
+</ol>
     
 
     <pre class="usage"><span class='fu'>nest_core</span>(<span class='no'>data</span>, <span class='no'>type</span>)</pre>
@@ -113,20 +115,22 @@ Based on `type` parameter, will aggregate and create cognostics by:
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimun, following columns:
-1. AccountNumber -- Unique numeric identifier --
-2. Date -- Daily consecutive --
-3. Count -- Must include all real numbers --</p></td>
+      <td><p>Must include, at minimun, following columns:</p><ol>
+<li><p>AccountNumber -- Unique numeric identifier --</p></li>
+<li><p>Date -- Daily consecutive --</p></li>
+<li><p>Count -- Must include all real numbers --</p></li>
+</ol></td>
     </tr>
     <tr>
       <th>type</th>
       <td><p>All meaningfull specifications in
 English language are supported.
-Stable arguments are:
-1. day
-2. week
-3. month
-4. year</p></td>
+Stable arguments are:</p><ol>
+<li><p>day</p></li>
+<li><p>week</p></li>
+<li><p>month</p></li>
+<li><p>year</p></li>
+</ol></td>
     </tr>
     </table>
     
