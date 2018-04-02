@@ -1,14 +1,14 @@
 #' @title cut_point
 #' @import tidyverse lubridate
 #' @export
-#' @description Stuff
+#' @description **Designed to implement `cut_point` algorithin on column**
 #'
 #' @param data Tibble/Data Frame with the following columns:
 #' * Account Number (unique identifier)
 #' * Date
 #' * Count
-#' @param movAvg Moving Average 
-#' * Default is `21``
+#' @param movAvg Moving average 
+#' * Default is `21`
 #' @param startQuant Quantile percentage to determine start date cut_point
 #' * Default is `0.2` 
 #' @param movAvg_zeroDays Number of consecetive moving averages evaluated at zero to begin end date cut_point process
@@ -16,8 +16,7 @@
 #' @param dialBack Number of days to 'dialBack' to determine a new end date cutPoint
 #' * Defaults to `0`
 #'
-#' 
-#' @return filtered tibble
+#' @return filtered tibble with `cut_point` algorithim performed
 #'
 #' @examples test
 cut_point <- function(data, movAvg = 21, startQuant = 0.2, 

@@ -7,18 +7,23 @@
 kMeans_sparkly(data, centers = 10)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Many date columns, with weekly counts within cells -- Weekly consecutive --
-Intended to take data in weekly long format
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
+}}
+
+\item{centers}{Number of kmeans centers
+\itemize{
+\item Default is \code{10}
 }}
 }
 \value{
 spread tibble
 }
 \description{
-kMeans_sparkly
+\strong{Intended to create kmeans from sparklyr}
 }
 \examples{
 test

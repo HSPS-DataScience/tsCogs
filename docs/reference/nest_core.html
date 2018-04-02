@@ -98,14 +98,14 @@ Year
     </div>
 
     
-    <p>Designed to append on numerous descriptive numeric cognostics as columns
+    <p><strong>Designed to append on numerous descriptive numeric cognostics as columns
 then nest into a tibble with "AccountNumber" being the identifier.
-Based on <code>type</code> parameter, will aggregate and create cognostics by:</p><ol>
+Based on <code>type</code> parameter, will aggregate and create cognostics by:</strong></p><ul>
 <li><p>Day</p></li>
 <li><p>Week</p></li>
 <li><p>Month</p></li>
 <li><p>Year</p></li>
-</ol>
+</ul>
     
 
     <pre class="usage"><span class='fu'>nest_core</span>(<span class='no'>data</span>, <span class='no'>type</span>)</pre>
@@ -115,22 +115,22 @@ Based on <code>type</code> parameter, will aggregate and create cognostics by:</
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimun, following columns:</p><ol>
-<li><p>AccountNumber -- Unique numeric identifier --</p></li>
-<li><p>Date -- Daily consecutive --</p></li>
-<li><p>Count -- Must include all real numbers --</p></li>
-</ol></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>type</th>
       <td><p>All meaningfull specifications in
 English language are supported.
-Stable arguments are:</p><ol>
-<li><p>day</p></li>
-<li><p>week</p></li>
-<li><p>month</p></li>
-<li><p>year</p></li>
-</ol></td>
+Stable arguments are:</p><ul>
+<li><p><code>day</code></p></li>
+<li><p><code>week</code></p></li>
+<li><p><code>month</code></p></li>
+<li><p><code>year</code></p></li>
+</ul></td>
     </tr>
     </table>
     

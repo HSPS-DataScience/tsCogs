@@ -1,21 +1,21 @@
-#' nest_append_interval
-#'
-#' @param nestTib Nested tibble with "AccountNumber" as identifier
-#' @param rawData Must include, at minimun, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' @param type Must be one of following strings:
-#' 1. "years"
-#' 2. "months"
-#' 3. "weeks"
-#' 4. "days"
-#' @param interval Must be positive integer excluding zero
-#' 
+#' @title nest_append_interval
 #' @import tidyverse
+#' @export
+#' @description **Designed to create cognostics by certain interval/ratio in the past**
+#'
+#' @param nestTib Nested tibble with `AccountNumber`` as identifier
+#' @param rawData Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' @param type Must be one of following strings:
+#' * `years`
+#' * `months`
+#' * `weeks`
+#' * `days`
+#' @param interval Must be positive integer excluding zero
 #'
 #' @return nested tibble
-#' @export
 #'
 #' @examples test
 nest_append_interval <- function(nestTib, rawData, type, interval) {
@@ -28,25 +28,25 @@ nest_append_interval <- function(nestTib, rawData, type, interval) {
 
 ######################################################################
 
-#' nest_interval
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' @param type Must be one of following strings:
-#' 1. "years"
-#' 2. "months"
-#' 3. "weeks"
-#' 4. "days"
-#' @param interval Must be positive integer excluding zero
-#' 
+#' @title nest_interval
 #' @import tidyverse lubridate
 #' @importFrom purrr map2
 #' @importFrom Hmisc capitalize
+#' @export
+#' @description **Designed to create cognostics by certain interval/ratio in the past**
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' @param type Must be one of following strings:
+#' * `years`
+#' * `months`
+#' * `weeks`
+#' * `days`
+#' @param interval Must be positive integer excluding zero
 #'
 #' @return nested joined tibble
-#' @export
 #'
 #' @examples test
 nest_interval <- function(data, type, interval) {
@@ -97,27 +97,27 @@ nest_interval <- function(data, type, interval) {
 
 ######################################################################
 
-#' nest_core_interval
+#' @title nest_core_interval
+#' @import tidyverse Hmisc multidplyr
+#' @export
+#' @description **Designed to create cognostics by certain interval/ratio in the past**
 #'
-#' @param data Must include, at minimun, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
 #' @param type Must be one of following strings:
-#' 1. "years"
-#' 2. "months"
-#' 3. "weeks"
-#' 4. "days"
+#' * `years`
+#' * `months`
+#' * `weeks`
+#' * `days`
 #' @param interval Must be positive integer excluding zero
 #' @param divide Must be one of following strings:
-#' 1. "A"
-#' 2. "R"
-#' 3. "L"
-#' 
-#' @import tidyverse Hmisc multidplyr
+#' * `A`
+#' * `R`
+#' * `L`
 #'
 #' @return nested tibble
-#' @export
 #'
 #' @examples test
 nest_core_interval <- function(data, type, interval, divide) {
@@ -166,18 +166,18 @@ nest_core_interval <- function(data, type, interval, divide) {
 
 ######################################################################
 
-#' nest_interval_unnest
-#'
-#' @param data Must include, at minimun, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' 
+#' @title nest_interval_unnest
 #' @import tidyverse purrr magrittr
+#' @export
+#' @description **Designed to unnest a nested tibble, which is a list of lists**
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
 #'
 #' @return unnested tibble
-#' @export
-#'
+#' 
 #' @examples test
 nest_interval_unnest <- function(data) {
   

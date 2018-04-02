@@ -10,17 +10,17 @@ find_SignedSequence(data, number)
 \item{data}{Must be vector of numbers}
 
 \item{number}{Must be one of following integers:
-\enumerate{
-\item -1 -- Negative Integers
-\item 0 -- Zero Integers
-\item 1 -- Positive Integers
+\itemize{
+\item \code{-1}
+\item \code{0}
+\item \code{1}
 }}
 }
 \value{
 integer
 }
 \description{
-find_SignedSequence
+\strong{Inteded to find largest sequence of negative, zero, or positive integers}
 }
 \examples{
 test

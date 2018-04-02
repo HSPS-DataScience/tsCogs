@@ -7,35 +7,35 @@
 nest_core_interval(data, type, interval, divide)
 }
 \arguments{
-\item{data}{Must include, at minimun, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 
 \item{type}{Must be one of following strings:
-\enumerate{
-\item "years"
-\item "months"
-\item "weeks"
-\item "days"
+\itemize{
+\item \code{years}
+\item \code{months}
+\item \code{weeks}
+\item \code{days}
 }}
 
 \item{interval}{Must be positive integer excluding zero}
 
 \item{divide}{Must be one of following strings:
-\enumerate{
-\item "A"
-\item "R"
-\item "L"
+\itemize{
+\item \code{A}
+\item \code{R}
+\item \code{L}
 }}
 }
 \value{
 nested tibble
 }
 \description{
-nest_core_interval
+\strong{Designed to create cognostics by certain interval/ratio in the past}
 }
 \examples{
 test

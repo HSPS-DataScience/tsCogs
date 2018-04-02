@@ -1,11 +1,14 @@
-#' kMeans_sparkly
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Many date columns, with weekly counts within cells -- Weekly consecutive --
-#' Intended to take data in weekly long format
-#'
+#' @title kMeans_sparkly
 #' @import tidyverse sparklyr
+#' @export
+#' @description **Intended to create kmeans from sparklyr**
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' @param centers Number of kmeans centers
+#' * Default is `10`
 #' 
 #' @return spread tibble
 #' @export

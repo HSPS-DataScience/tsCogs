@@ -7,18 +7,18 @@
 nest_interval_unnest(data)
 }
 \arguments{
-\item{data}{Must include, at minimun, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 }
 \value{
 unnested tibble
 }
 \description{
-nest_interval_unnest
+\strong{Designed to unnest a nested tibble, which is a list of lists}
 }
 \examples{
 test

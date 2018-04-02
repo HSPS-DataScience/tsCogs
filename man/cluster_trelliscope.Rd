@@ -18,7 +18,7 @@ cluster_trelliscope(data, trans = "identity", name = "Cluster Results",
 
 \item{trans}{Scale of the y-axis, see \code{ggplot2::scale_y_continuous()}
 \itemize{
-\item Default is `identity``
+\item Default is \code{identity}
 }}
 
 \item{name}{Name of the trelliscope view

@@ -10,20 +10,20 @@ find_LadderSequence(data, sequence)
 \item{data}{Must be vector of numbers}
 
 \item{sequence}{Must be one of following strings:
-\enumerate{
-\item "I" -- Increasing
-\item "D" -- Decreasing
-\item "IP" -- Increasing Positive
-\item "DP" -- Decreasing Positive
-\item "IN" -- Increasing Negative
-\item "DN" -- Decreasing Negative
+\itemize{
+\item \code{I} - Increasing
+\item \code{D} - Decreasing
+\item \code{IP} - Increasing Positive
+\item \code{P} - Decreasing Positive
+\item \code{IN} - Increasing Negative
+\item \code{DN} - Decreasing Negative
 }}
 }
 \value{
 integer
 }
 \description{
-find_LadderSequence
+\strong{Inteded to find largest sequence of many ladder sequences}
 }
 \examples{
 test

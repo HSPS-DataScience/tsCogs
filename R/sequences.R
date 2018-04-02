@@ -1,13 +1,14 @@
-#' find_SignedSequence
+#' @title find_SignedSequence
+#' @export
+#' @description **Inteded to find largest sequence of negative, zero, or positive integers**
 #'
 #' @param data Must be vector of numbers
 #' @param number Must be one of following integers:
-#' 1. -1 -- Negative Integers
-#' 2. 0 -- Zero Integers
-#' 3. 1 -- Positive Integers
+#' * `-1`
+#' * `0`
+#' * `1`
 #'
 #' @return integer
-#' @export
 #'
 #' @examples test
 find_SignedSequence <- function(data, number) {
@@ -21,19 +22,20 @@ find_SignedSequence <- function(data, number) {
 
 ######################################################################
 
-#' find_LadderSequence
+#' @title find_LadderSequence
+#' @export
+#' @description **Inteded to find largest sequence of many ladder sequences**
 #'
 #' @param data Must be vector of numbers
 #' @param sequence Must be one of following strings:
-#' 1. "I" -- Increasing
-#' 2. "D" -- Decreasing
-#' 3. "IP" -- Increasing Positive
-#' 4. "DP" -- Decreasing Positive
-#' 5. "IN" -- Increasing Negative
-#' 6. "DN" -- Decreasing Negative
+#' * `I` - Increasing
+#' * `D` - Decreasing
+#' * `IP` - Increasing Positive
+#' * `P` - Decreasing Positive
+#' * `IN` - Increasing Negative
+#' * `DN` - Decreasing Negative
 #'
 #' @return integer
-#' @export
 #'
 #' @examples test
 find_LadderSequence <- function(data, sequence) {

@@ -30,7 +30,7 @@
 <meta property="og:title" content="nest_todo — nest_todo" />
 
 <meta property="og:description" content="Designed to create then join four nested tibbles into one tibble
-with "AccountNumber" being the identifier:
+with AccountNumber being the identifier by:
 Daily
 Weekly
 Monthly
@@ -97,13 +97,13 @@ Yearly
     </div>
 
     
-    <p>Designed to create then join four nested tibbles into one tibble
-with "AccountNumber" being the identifier:</p><ol>
+    <p><strong>Designed to create then join four nested tibbles into one tibble
+with <code>AccountNumber</code> being the identifier by:</strong></p><ul>
 <li><p>Daily</p></li>
 <li><p>Weekly</p></li>
 <li><p>Monthly</p></li>
 <li><p>Yearly</p></li>
-</ol>
+</ul>
     
 
     <pre class="usage"><span class='fu'>nest_todo</span>(<span class='no'>data</span>)</pre>
@@ -113,17 +113,17 @@ with "AccountNumber" being the identifier:</p><ol>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimum, following columns:</p><ol>
-<li><p>AccountNumber -- Unique numeric identifier --</p></li>
-<li><p>Date -- Daily consecutive --</p></li>
-<li><p>Count -- Must include all real numbers --</p></li>
-</ol></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+</ul></td>
     </tr>
     </table>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>nested joined tibble</p>
+    <p>nested and joined tibble</p>
     
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>

@@ -1,25 +1,30 @@
-#' cut_point_trelliscope
-#'
-#' @param data Must include, at minimum, following columns:    
-#' 1. AccountNumber -- Unique numeric identifier --    
-#' 2. Date -- Daily consecutive --    
-#' 3. Count -- Must include all real numbers --    
-#' Intended to take data from long SQL Server table format    
-#' @param movAvg Moving Average -- Defaults to 21    
-#' @param trans scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --
-#' @param name name of the trelliscope view -- defaults to "Cluster Results" --
-#' @param group group of trelliscope views -- defaults to "common" --
-#' @param path the base directory of trelliscope app -- defaults to "~/trelliscope" --
-#' @param selfContained create the individual pre-rendered panels -- defaults to FALSE --
-#'
+#' @title cut_point_trelliscope
 #' @import tidyverse trelliscopejs pracma magrittr ggplot2 rbokeh
+#' @export
+#' @description **Intended to take long data and output trelliscope with `cut_point` vertical lines**
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#' @param movAvg Moving average 
+#' * Default is `21`
+#' @param trans Scale of the y-axis, see `ggplot2::scale_y_continuous()`
+#' * Default is `identity`
+#' @param name Name of the trelliscope view
+#' * Default is `cut_point Results`
+#' @param group Group of trelliscope views
+#' * Default is `common`
+#' @param path Base directory of trelliscope app
+#' * Default is `~/trelliscope`
+#' @param selfContained Create the individual pre-rendered panels
+#' * Default is `FALSE`
 #' 
 #' @return trelliscopejs object
-#' @export
 #' 
 #' @examples test
 cut_point_trelliscope <- function(data, movAvg = 21, trans = "identity",
-                                 name = "cutPoint Results", group = "common", 
+                                 name = "cut_point Results", group = "common", 
                                  path = "~/trelliscope", selfContained = F) {
   
   cutData <- data %>%

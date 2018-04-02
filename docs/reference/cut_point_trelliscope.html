@@ -29,7 +29,7 @@
   
 <meta property="og:title" content="cut_point_trelliscope — cut_point_trelliscope" />
 
-<meta property="og:description" content="cut_point_trelliscope" />
+<meta property="og:description" content="Intended to take long data and output trelliscope with cut_point vertical lines" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -91,11 +91,11 @@
     </div>
 
     
-    <p>cut_point_trelliscope</p>
+    <p><strong>Intended to take long data and output trelliscope with <code>cut_point</code> vertical lines</strong></p>
     
 
     <pre class="usage"><span class='fu'>cut_point_trelliscope</span>(<span class='no'>data</span>, <span class='kw'>movAvg</span> <span class='kw'>=</span> <span class='fl'>21</span>, <span class='kw'>trans</span> <span class='kw'>=</span> <span class='st'>"identity"</span>,
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cutPoint Results"</span>, <span class='kw'>group</span> <span class='kw'>=</span> <span class='st'>"common"</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"~/trelliscope"</span>,
+  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>"cut_point Results"</span>, <span class='kw'>group</span> <span class='kw'>=</span> <span class='st'>"common"</span>, <span class='kw'>path</span> <span class='kw'>=</span> <span class='st'>"~/trelliscope"</span>,
   <span class='kw'>selfContained</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a> Arguments</h2>
@@ -103,36 +103,47 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimum, following columns:</p><ol>
-<li><p>AccountNumber -- Unique numeric identifier --</p></li>
-<li><p>Date -- Daily consecutive --</p></li>
-<li><p>Count -- Must include all real numbers --
-Intended to take data from long SQL Server table format</p></li>
-</ol></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>movAvg</th>
-      <td><p>Moving Average -- Defaults to 21</p></td>
+      <td><p>Moving average</p><ul>
+<li><p>Default is <code>21</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>trans</th>
-      <td><p>scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --</p></td>
+      <td><p>Scale of the y-axis, see <code><a href='http://www.rdocumentation.org/packages/ggplot2/topics/scale_continuous'>ggplot2::scale_y_continuous()</a></code></p><ul>
+<li><p>Default is <code>identity</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>name</th>
-      <td><p>name of the trelliscope view -- defaults to "Cluster Results" --</p></td>
+      <td><p>Name of the trelliscope view</p><ul>
+<li><p>Default is <code>cut_point Results</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>group</th>
-      <td><p>group of trelliscope views -- defaults to "common" --</p></td>
+      <td><p>Group of trelliscope views</p><ul>
+<li><p>Default is <code>common</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>path</th>
-      <td><p>the base directory of trelliscope app -- defaults to "~/trelliscope" --</p></td>
+      <td><p>Base directory of trelliscope app</p><ul>
+<li><p>Default is <code>~/trelliscope</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>selfContained</th>
-      <td><p>create the individual pre-rendered panels -- defaults to FALSE --</p></td>
+      <td><p>Create the individual pre-rendered panels</p><ul>
+<li><p>Default is <code>FALSE</code></p></li>
+</ul></td>
     </tr>
     </table>
     

@@ -29,7 +29,7 @@
   
 <meta property="og:title" content="kMeans_sparkly — kMeans_sparkly" />
 
-<meta property="og:description" content="kMeans_sparkly" />
+<meta property="og:description" content="Intended to create kmeans from sparklyr" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -91,7 +91,7 @@
     </div>
 
     
-    <p>kMeans_sparkly</p>
+    <p><strong>Intended to create kmeans from sparklyr</strong></p>
     
 
     <pre class="usage"><span class='fu'>kMeans_sparkly</span>(<span class='no'>data</span>, <span class='kw'>centers</span> <span class='kw'>=</span> <span class='fl'>10</span>)</pre>
@@ -101,11 +101,17 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p>Must include, at minimum, following columns:</p><ol>
-<li><p>AccountNumber -- Unique numeric identifier --</p></li>
-<li><p>Many date columns, with weekly counts within cells -- Weekly consecutive --
-Intended to take data in weekly long format</p></li>
-</ol></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+</ul></td>
+    </tr>
+    <tr>
+      <th>centers</th>
+      <td><p>Number of kmeans centers</p><ul>
+<li><p>Default is <code>10</code></p></li>
+</ul></td>
     </tr>
     </table>
     

@@ -7,20 +7,20 @@
 nest_todo(data)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 }
 \value{
-nested joined tibble
+nested and joined tibble
 }
 \description{
-Designed to create then join four nested tibbles into one tibble
-with "AccountNumber" being the identifier:
-\enumerate{
+\strong{Designed to create then join four nested tibbles into one tibble
+with \code{AccountNumber} being the identifier by:}
+\itemize{
 \item Daily
 \item Weekly
 \item Monthly

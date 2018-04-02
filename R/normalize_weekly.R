@@ -1,15 +1,14 @@
-#' normalize_weekly
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' Intended to take data from long SQL Server table format
-#'
+#' @title normalize_weekly
 #' @import tidyverse lubridate
+#' @export
+#' @description **Designed to normalize at the weekly level**
+#'
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
 #' 
 #' @return spread tibble
-#' @export
 #' 
 #' @examples test
 normalize_weekly <- function(data) {

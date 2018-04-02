@@ -8,26 +8,38 @@ cut_point(data, movAvg = 21, startQuant = 0.2, movAvg_zeroDays = 1,
   dialBack = 0)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 
-\item{movAvg}{Moving Average -- Defaults to 21}
+\item{movAvg}{Moving average
+\itemize{
+\item Default is \code{21}
+}}
 
-\item{startQuant}{Quantile percentage to determine start date cutPoint -- Defaults to 0.2}
+\item{startQuant}{Quantile percentage to determine start date cut_point
+\itemize{
+\item Default is \code{0.2}
+}}
 
-\item{movAvg_zeroDays}{Number of consecetive moving averages evaluated at zero to begin end date cutPoint process -- Defaults to 1}
+\item{movAvg_zeroDays}{Number of consecetive moving averages evaluated at zero to begin end date cut_point process
+\itemize{
+\item Defaults to \code{1}
+}}
 
-\item{dialBack}{Number of days to 'dialBack' to determine a new end date cutPoint -- Defaults to 0}
+\item{dialBack}{Number of days to 'dialBack' to determine a new end date cutPoint
+\itemize{
+\item Defaults to \code{0}
+}}
 }
 \value{
-filtered tibble
+filtered tibble with \code{cut_point} algorithim performed
 }
 \description{
-cut_point
+\strong{Designed to implement \code{cut_point} algorithin on column}
 }
 \examples{
 test

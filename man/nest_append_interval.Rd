@@ -7,21 +7,21 @@
 nest_append_interval(nestTib, rawData, type, interval)
 }
 \arguments{
-\item{nestTib}{Nested tibble with "AccountNumber" as identifier}
+\item{nestTib}{Nested tibble with `AccountNumber`` as identifier}
 
-\item{rawData}{Must include, at minimun, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
+\item{rawData}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 
 \item{type}{Must be one of following strings:
-\enumerate{
-\item "years"
-\item "months"
-\item "weeks"
-\item "days"
+\itemize{
+\item \code{years}
+\item \code{months}
+\item \code{weeks}
+\item \code{days}
 }}
 
 \item{interval}{Must be positive integer excluding zero}
@@ -30,7 +30,7 @@ nest_append_interval(nestTib, rawData, type, interval)
 nested tibble
 }
 \description{
-nest_append_interval
+\strong{Designed to create cognostics by certain interval/ratio in the past}
 }
 \examples{
 test

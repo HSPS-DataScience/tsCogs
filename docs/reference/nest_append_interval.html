@@ -29,7 +29,7 @@
   
 <meta property="og:title" content="nest_append_interval — nest_append_interval" />
 
-<meta property="og:description" content="nest_append_interval" />
+<meta property="og:description" content="Designed to create cognostics by certain interval/ratio in the past" />
 <meta name="twitter:card" content="summary" />
 <!-- mathjax -->
 <script src='https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
@@ -91,7 +91,7 @@
     </div>
 
     
-    <p>nest_append_interval</p>
+    <p><strong>Designed to create cognostics by certain interval/ratio in the past</strong></p>
     
 
     <pre class="usage"><span class='fu'>nest_append_interval</span>(<span class='no'>nestTib</span>, <span class='no'>rawData</span>, <span class='no'>type</span>, <span class='no'>interval</span>)</pre>
@@ -101,24 +101,24 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>nestTib</th>
-      <td><p>Nested tibble with "AccountNumber" as identifier</p></td>
+      <td><p>Nested tibble with `AccountNumber`` as identifier</p></td>
     </tr>
     <tr>
       <th>rawData</th>
-      <td><p>Must include, at minimun, following columns:</p><ol>
-<li><p>AccountNumber -- Unique numeric identifier --</p></li>
-<li><p>Date -- Daily consecutive --</p></li>
-<li><p>Count -- Must include all real numbers --</p></li>
-</ol></td>
+      <td><p>Tibble/Data Frame with the following columns:</p><ul>
+<li><p>Account Number (unique identifier)</p></li>
+<li><p>Date</p></li>
+<li><p>Count</p></li>
+</ul></td>
     </tr>
     <tr>
       <th>type</th>
-      <td><p>Must be one of following strings:</p><ol>
-<li><p>"years"</p></li>
-<li><p>"months"</p></li>
-<li><p>"weeks"</p></li>
-<li><p>"days"</p></li>
-</ol></td>
+      <td><p>Must be one of following strings:</p><ul>
+<li><p><code>years</code></p></li>
+<li><p><code>months</code></p></li>
+<li><p><code>weeks</code></p></li>
+<li><p><code>days</code></p></li>
+</ul></td>
     </tr>
     <tr>
       <th>interval</th>

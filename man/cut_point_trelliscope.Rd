@@ -5,35 +5,52 @@
 \title{cut_point_trelliscope}
 \usage{
 cut_point_trelliscope(data, movAvg = 21, trans = "identity",
-  name = "cutPoint Results", group = "common", path = "~/trelliscope",
+  name = "cut_point Results", group = "common", path = "~/trelliscope",
   selfContained = F)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
-Intended to take data from long SQL Server table format
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 
-\item{movAvg}{Moving Average -- Defaults to 21}
+\item{movAvg}{Moving average
+\itemize{
+\item Default is \code{21}
+}}
 
-\item{trans}{scale of the y-axis, see ggplot2::scale_x_continuous() -- defaults to "identity" --}
+\item{trans}{Scale of the y-axis, see \code{ggplot2::scale_y_continuous()}
+\itemize{
+\item Default is \code{identity}
+}}
 
-\item{name}{name of the trelliscope view -- defaults to "Cluster Results" --}
+\item{name}{Name of the trelliscope view
+\itemize{
+\item Default is \code{cut_point Results}
+}}
 
-\item{group}{group of trelliscope views -- defaults to "common" --}
+\item{group}{Group of trelliscope views
+\itemize{
+\item Default is \code{common}
+}}
 
-\item{path}{the base directory of trelliscope app -- defaults to "~/trelliscope" --}
+\item{path}{Base directory of trelliscope app
+\itemize{
+\item Default is \code{~/trelliscope}
+}}
 
-\item{selfContained}{create the individual pre-rendered panels -- defaults to FALSE --}
+\item{selfContained}{Create the individual pre-rendered panels
+\itemize{
+\item Default is \code{FALSE}
+}}
 }
 \value{
 trelliscopejs object
 }
 \description{
-cut_point_trelliscope
+\strong{Intended to take long data and output trelliscope with \code{cut_point} vertical lines}
 }
 \examples{
 test

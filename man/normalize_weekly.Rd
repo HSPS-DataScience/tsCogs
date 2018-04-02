@@ -7,19 +7,18 @@
 normalize_weekly(data)
 }
 \arguments{
-\item{data}{Must include, at minimum, following columns:
-\enumerate{
-\item AccountNumber -- Unique numeric identifier --
-\item Date -- Daily consecutive --
-\item Count -- Must include all real numbers --
-Intended to take data from long SQL Server table format
+\item{data}{Tibble/Data Frame with the following columns:
+\itemize{
+\item Account Number (unique identifier)
+\item Date
+\item Count
 }}
 }
 \value{
 spread tibble
 }
 \description{
-normalize_weekly
+\strong{Designed to normalize at the weekly level}
 }
 \examples{
 test

@@ -1,21 +1,19 @@
-#' nest_todo
-#'
-#' Designed to create then join four nested tibbles into one tibble
-#' with "AccountNumber" being the identifier:
-#' 1. Daily
-#' 2. Weekly
-#' 3. Monthly
-#' 4. Yearly
-#'
-#' @param data Must include, at minimum, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
-#' 
+#' @title nest_todo
 #' @import tidyverse
-#'
-#' @return nested joined tibble
 #' @export
+#' @description **Designed to create then join four nested tibbles into one tibble
+#' with `AccountNumber` being the identifier by:**
+#' * Daily
+#' * Weekly
+#' * Monthly
+#' * Yearly
+#' 
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
+#'
+#' @return nested and joined tibble
 #'
 #' @examples test
 nest_todo <- function(data) {
@@ -33,34 +31,32 @@ nest_todo <- function(data) {
 
 ######################################################################
 
-#' nest_core
-#'
-#' Designed to append on numerous descriptive numeric cognostics as columns
+#' @title nest_core
+#' @import tidyverse lubridate multidplyr
+#' @importFrom Hmisc capitalize
+#' @export
+#' @description **Designed to append on numerous descriptive numeric cognostics as columns
 #' then nest into a tibble with "AccountNumber" being the identifier.
-#' Based on `type` parameter, will aggregate and create cognostics by:
-#' 1. Day
-#' 2. Week
-#' 3. Month
-#' 4. Year
+#' Based on `type` parameter, will aggregate and create cognostics by:**
+#' * Day
+#' * Week
+#' * Month
+#' * Year
 #'
-#' @param data Must include, at minimun, following columns:
-#' 1. AccountNumber -- Unique numeric identifier --
-#' 2. Date -- Daily consecutive --
-#' 3. Count -- Must include all real numbers --
+#' @param data Tibble/Data Frame with the following columns:
+#' * Account Number (unique identifier)
+#' * Date
+#' * Count
 #' @param type All meaningfull specifications in
 #' English language are supported.
 #' Stable arguments are:
-#' 1. day
-#' 2. week
-#' 3. month
-#' 4. year
-#' 
-#' @import tidyverse lubridate multidplyr
-#' @importFrom Hmisc capitalize
+#' * `day`
+#' * `week`
+#' * `month`
+#' * `year`
 #'
 #' @return nested tibble
-#' @export
-#'
+#' 
 #' @examples test
 nest_core <- function(data, type) {
   
