@@ -3,6 +3,8 @@
 tsCogs
 ======
 
+https://hsps-datascience.github.io/tsCogs/articles/tsCogs.html
+
 The goal of tsCogs is to ...
 
 Installation
